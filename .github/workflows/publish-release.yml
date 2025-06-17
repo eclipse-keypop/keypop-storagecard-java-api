@@ -1,0 +1,9 @@
+name: Publish Release package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    uses: eclipse-keypop/keypop-actions/.github/workflows/reusable-publish-snapshot.yml@publish-release-v1
