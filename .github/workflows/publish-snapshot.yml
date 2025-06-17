@@ -7,3 +7,4 @@ on:
 jobs:
   publish-snapshot:
     uses: eclipse-keypop/keypop-actions/.github/workflows/reusable-publish-snapshot.yml@publish-snapshot-v1
+    secrets: inherit
