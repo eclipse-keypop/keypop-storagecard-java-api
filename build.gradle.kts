@@ -31,6 +31,14 @@ dependencies {
 //  STANDARD CONFIGURATION FOR JAVA PROJECTS
 ///////////////////////////////////////////////////////////////////////////////
 
+if (project.hasProperty("releaseTag")) {
+  project.version = project.property("releaseTag") as String
+  println("Release mode: version set to ${project.version}")
+} else {
+  println("Development mode: version is ${project.version}")
+}
+
+
 val javaSourceLevel: String by project
 val javaTargetLevel: String by project
 
@@ -186,7 +194,7 @@ publishing {
 }
 
 signing {
-  if (project.hasProperty("RELEASE")) {
+  if (project.hasProperty("releaseTag")) {
     useGpgCmd()
     sign(publishing.publications["mavenJava"])
   }
