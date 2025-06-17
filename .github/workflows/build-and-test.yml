@@ -5,5 +5,5 @@ on:
     branches: [main]
 
 jobs:
-  publish:
+  build-and-test:
     uses: eclipse-keypop/keypop-actions/.github/workflows/reusable-build-and-test.yml@build-and-test-v1

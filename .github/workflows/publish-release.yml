@@ -5,5 +5,5 @@ on:
     types: [published]
 
 jobs:
-  publish:
+  publish-release:
     uses: eclipse-keypop/keypop-actions/.github/workflows/reusable-publish-snapshot.yml@publish-release-v1
