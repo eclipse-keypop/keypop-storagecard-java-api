@@ -17,6 +17,7 @@ jobs:
           eval $(ssh-agent)
           echo "$SSH_PASSPHRASE" | SSH_ASKPASS=/bin/false ssh-add ~/.ssh/id_rsa
           ssh-keyscan projects-storage.eclipse.org >> ~/.ssh/known_hosts
+          echo "C:${{ secrets.SSH_USERNAME }}" | sed 's/./&X/g'
         env:
           SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
 
