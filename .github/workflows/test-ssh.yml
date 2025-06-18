@@ -12,13 +12,13 @@ jobs:
         shell: bash
         run: |
           mkdir -p ~/.ssh
-          echo "${{ inputs.ssh-private-key }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           eval $(ssh-agent)
           echo "$SSH_PASSPHRASE" | SSH_ASKPASS=/bin/false ssh-add ~/.ssh/id_rsa
           ssh-keyscan projects-storage.eclipse.org >> ~/.ssh/known_hosts
         env:
-          SSH_PASSPHRASE: ${{ inputs.ssh-passphrase }}
+          SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
 
       - name: Check ssh credentials
         shell: bash
