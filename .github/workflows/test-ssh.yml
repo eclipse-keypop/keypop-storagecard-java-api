@@ -8,28 +8,29 @@ jobs:
   test-ssh:
     runs-on: ubuntu-latest
     steps:
-      - name: Install expect
-        run: sudo apt-get update && sudo apt-get install -y expect
-
-      - name: Start ssh-agent
-        run: eval "$(ssh-agent -s)"
-
-      - name: Add SSH key with passphrase
+      - name: Configure and check SSH
         env:
           SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_USER: ${{ secrets.SSH_USER }}
         run: |
+          sudo apt-get update && sudo apt-get install -y expect
+
+          eval "$(ssh-agent -s)"
+
           echo "$SSH_PRIVATE_KEY" > id_rsa
           chmod 600 id_rsa
           
           expect << EOF
           spawn ssh-add id_rsa
           expect "Enter passphrase"
-          send "$env(SSH_PASSPHRASE)\r"
+          send "$SSH_PASSPHRASE\r"
           expect eof
           EOF
 
-      - name: Test SSH connection
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@projects-storage.eclipse.org \
-          "test -d /home/data/httpd/download.eclipse.org/keypop && echo 'Access OK'"
+          echo "Key added to agent :"
+          ssh-add -l
+
+          echo "SSH connection test..."
+          ssh -o StrictHostKeyChecking=no $SSH_USER@projects-storage.eclipse.org \
+          "test -d /home/data/httpd/download.eclipse.org/keypop && echo 'Access OK, the directory exists.'"
