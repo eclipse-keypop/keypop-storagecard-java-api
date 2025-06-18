@@ -32,5 +32,5 @@ jobs:
           ssh-add -l
 
           echo "SSH connection test..."
-          ssh -vvv -o StrictHostKeyChecking=no SSH_USERNAME@projects-storage.eclipse.org \
+          ssh -vvv -o StrictHostKeyChecking=no $SSH_USERNAME@projects-storage.eclipse.org \
           "test -d /home/data/httpd/download.eclipse.org/keypop && echo 'Access OK, the directory exists.'"
