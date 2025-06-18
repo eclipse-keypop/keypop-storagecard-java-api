@@ -1,0 +1,26 @@
+name: Check SSH credentials
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-ssh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up SSH key
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ inputs.ssh-private-key }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          eval $(ssh-agent)
+          echo "$SSH_PASSPHRASE" | SSH_ASKPASS=/bin/false ssh-add ~/.ssh/id_rsa
+          ssh-keyscan projects-storage.eclipse.org >> ~/.ssh/known_hosts
+        env:
+          SSH_PASSPHRASE: ${{ inputs.ssh-passphrase }}
+
+      - name: Check ssh credentials
+        shell: bash
+        run: |
+          ssh genie.keypop@projects-storage.eclipse.org "test -d /home/data/httpd/download.eclipse.org/keypop && echo 'Access OK'"

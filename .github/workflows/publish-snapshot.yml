@@ -2,7 +2,7 @@ name: Publish Snapshot package
 
 on:
   push:
-    branches: [main]
+    branches: [main_no]
 
 jobs:
   publish-snapshot:
