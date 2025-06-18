@@ -5,43 +5,22 @@ on:
     branches: [main]
 
 jobs:
-  deploy:
+  check-ssh:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up SSH
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
-          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
-        run: |
-          # Start the ssh-agent
-          eval $(ssh-agent -s)
-          
-          # Create a temporary file for the expect script
-          cat <<EOF > add_key.sh
-          #!/usr/bin/expect -f
-          spawn ssh-add -
-          expect "Enter passphrase for /dev/stdin:"
-          send "\$env(SSH_PASSPHRASE)\r"
-          expect eof
-          EOF
-          chmod +x add_key.sh
-          
-          # Add the private key to the ssh-agent
-          echo "$SSH_PRIVATE_KEY" | ./add_key.sh
-          
-          # Optional: Add the server's host key to known_hosts to avoid interactive prompts
-          mkdir -p ~/.ssh
-          ssh-keyscan projects-storage.eclipse.org >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-
-      - name: ✅ Check SSH credentials
+      - name: Set up SSH key
         shell: bash
         run: |
-          echo "🔍 Testing SSH access..."
-          ssh -o StrictHostKeyChecking=yes $env(SSH_USERNAME)@projects-storage.eclipse.org \
-            "test -d /home/data/httpd/download.eclipse.org/keypop && echo '✅ Access OK' || echo '❌ Access Denied'"
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          eval $(ssh-agent)
+          echo "$SSH_PASSPHRASE" | SSH_ASKPASS=/bin/false ssh-add ~/.ssh/id_rsa
+          ssh-keyscan projects-storage.eclipse.org >> ~/.ssh/known_hosts
+        env:
+          SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
+
+      - name: Check ssh credentials
+        shell: bash
+        run: |
+          ssh ${{ secrets.SSH_USERNAME }}@projects-storage.eclipse.org "test -d /home/data/httpd/download.eclipse.org/keypop && echo 'Access OK'"
