@@ -14,6 +14,8 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
         run: |
+          sudo apt-get update && sudo apt-get install -y expect
+
           eval "$(ssh-agent -s)"
 
           echo "$SSH_PRIVATE_KEY" > id_rsa
