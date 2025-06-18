@@ -15,12 +15,10 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           eval $(ssh-agent)
-          echo "$SSH_PASSPHRASE" | SSH_ASKPASS=/bin/false ssh-add ~/.ssh/id_rsa
+          ssh-add ~/.ssh/id_rsa
           ssh-keyscan projects-storage.eclipse.org >> ~/.ssh/known_hosts
-        env:
-          SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
 
       - name: Check ssh credentials
         shell: bash
         run: |
-          ssh genie.keypop@projects-storage.eclipse.org "test -d /home/data/httpd/download.eclipse.org/keypop && echo 'Access OK'"
+          ssh -o StrictHostKeyChecking=yes genie.keypop@projects-storage.eclipse.org "test -d /home/data/httpd/download.eclipse.org/keypop && echo 'Access OK'"
