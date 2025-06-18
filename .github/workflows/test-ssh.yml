@@ -7,45 +7,39 @@ on:
 jobs:
   check-ssh:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Set up SSH key and debug
+      - name: 🔐 Set up SSH key with passphrase
         shell: bash
         run: |
           echo "🔐 Setting up SSH directory"
           mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-
+          
           echo "🔐 Writing SSH private key"
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
+          
           echo "🔐 Starting ssh-agent"
           eval "$(ssh-agent -s)"
 
-          echo "🔐 Adding SSH key with ssh-add"
-          echo "Note: ssh-add will fail if the key requires a passphrase and no agent interaction is possible."
+          echo "🔐 Installing 'expect' to simulate passphrase entry"
+          sudo apt-get update -qq
+          sudo apt-get install -y expect
 
-          # Try with SSH_ASKPASS fallback to echo for debugging (non-interactive env)
-          export DISPLAY=:0
-          SSH_ASKPASS="$(which echo)" SSH_ASKPASS_REQUIRE=force ssh-add ~/.ssh/id_rsa || {
-            echo "❌ ssh-add failed — likely due to passphrase. Try using an unencrypted key or configure SSH agent forwarding."
-            exit 1
-          }
+          echo "🔐 Adding SSH key with passphrase using expect"
+          expect <<EOF
+            spawn ssh-add ~/.ssh/id_rsa
+            expect "Enter passphrase*"
+            send "${{ secrets.SSH_PASSPHRASE }}\r"
+            expect eof
+          EOF
+  
+          echo "🔐 Adding known host for projects-storage.eclipse.org"
+          ssh-keyscan projects-storage.eclipse.org >> ~/.ssh/known_hosts
 
-          echo "✅ ssh-add succeeded"
-
-          echo "🔐 Known hosts setup"
-          ssh-keyscan -H projects-storage.eclipse.org >> ~/.ssh/known_hosts
-          
-          echo "🔐 SSH config (optional)"
-          echo -e "Host projects-storage.eclipse.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-          chmod 600 ~/.ssh/config
-
-      - name: Check SSH connectivity
+      - name: ✅ Check SSH credentials
         shell: bash
         run: |
-          echo "🔗 Testing SSH connection..."
-          ssh -v genie.keypop@projects-storage.eclipse.org "echo '✅ SSH connection successful'" || {
-            echo "❌ SSH connection failed"
-            exit 1
-          }
+          echo "🔍 Testing SSH access..."
+          ssh -o StrictHostKeyChecking=yes genie.keypop@projects-storage.eclipse.org \
+            "test -d /home/data/httpd/download.eclipse.org/keypop && echo '✅ Access OK' || echo '❌ Access Denied'"
