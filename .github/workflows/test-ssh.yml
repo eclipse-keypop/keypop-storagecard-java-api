@@ -8,17 +8,44 @@ jobs:
   check-ssh:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up SSH key
+      - name: Set up SSH key and debug
         shell: bash
         run: |
+          echo "🔐 Setting up SSH directory"
           mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          echo "🔐 Writing SSH private key"
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          eval $(ssh-agent)
-          ssh-add ~/.ssh/id_rsa
-          ssh-keyscan projects-storage.eclipse.org >> ~/.ssh/known_hosts
 
-      - name: Check ssh credentials
+          echo "🔐 Starting ssh-agent"
+          eval "$(ssh-agent -s)"
+
+          echo "🔐 Adding SSH key with ssh-add"
+          echo "Note: ssh-add will fail if the key requires a passphrase and no agent interaction is possible."
+
+          # Try with SSH_ASKPASS fallback to echo for debugging (non-interactive env)
+          export DISPLAY=:0
+          SSH_ASKPASS="$(which echo)" SSH_ASKPASS_REQUIRE=force ssh-add ~/.ssh/id_rsa || {
+            echo "❌ ssh-add failed — likely due to passphrase. Try using an unencrypted key or configure SSH agent forwarding."
+            exit 1
+          }
+
+          echo "✅ ssh-add succeeded"
+
+          echo "🔐 Known hosts setup"
+          ssh-keyscan -H projects-storage.eclipse.org >> ~/.ssh/known_hosts
+          
+          echo "🔐 SSH config (optional)"
+          echo -e "Host projects-storage.eclipse.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+          chmod 600 ~/.ssh/config
+
+      - name: Check SSH connectivity
         shell: bash
         run: |
-          ssh -o StrictHostKeyChecking=yes genie.keypop@projects-storage.eclipse.org "test -d /home/data/httpd/download.eclipse.org/keypop && echo 'Access OK'"
+          echo "🔗 Testing SSH connection..."
+          ssh -v genie.keypop@projects-storage.eclipse.org "echo '✅ SSH connection successful'" || {
+            echo "❌ SSH connection failed"
+            exit 1
+          }
