@@ -58,8 +58,8 @@ public interface StorageCardTransactionManager {
    *
    * <p>Once this command is processed, the data will be written to the card and updated in the
    * {@link StorageCard} memory image using the dedicated system block management methods. However,
-   * the value subsequently read from {@link StorageCard} may not accurately reflect the actual value
-   * present in the physical card until an explicit read operation is performed to refresh the
+   * the value subsequently read from {@link StorageCard} may not accurately reflect the actual
+   * value present in the physical card until an explicit read operation is performed to refresh the
    * memory image from the card.
    *
    * @param data The data to be written to the system block. The length must match the card's block
@@ -76,8 +76,8 @@ public interface StorageCardTransactionManager {
   /**
    * Prepares the reading of a specific block from the storage card.
    *
-   * <p>Block addresses start at 0 and the maximum value is provided by {@link
-   * ProductType#getBlockCount()}.
+   * <p>Block addresses start at 0 and the maximum value is equal to {@link
+   * ProductType#getBlockCount()} - 1.
    *
    * <p>Once this command is processed, the result is available in {@link StorageCard}.
    *
@@ -92,8 +92,8 @@ public interface StorageCardTransactionManager {
   /**
    * Prepares the reading of a range of blocks from the storage card.
    *
-   * <p>Block addresses start at 0 and the maximum value is provided by {@link
-   * ProductType#getBlockCount()}.
+   * <p>Block addresses start at 0 and the maximum value is equal to {@link
+   * ProductType#getBlockCount()} - 1.
    *
    * <p>Once this command is processed, the result is available in {@link StorageCard}.
    *
@@ -113,7 +113,7 @@ public interface StorageCardTransactionManager {
    * <p>The provided data should be a byte array representing the content of the blocks to be
    * written. The number of blocks that will be written is determined by the length of the data
    * array divided by the block size of the storage card. The block size is provided by {@link
-   * ProductType#getBlockCount()}.
+   * ProductType#getBlockSize()}.
    *
    * <p>Once this command is processed, the data will be available in {@link StorageCard} using the
    * dedicated block management methods.

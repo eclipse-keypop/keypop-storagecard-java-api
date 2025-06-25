@@ -22,25 +22,10 @@ import org.eclipse.keypop.reader.selection.spi.CardSelectionExtension;
 public interface StorageCardSelectionExtension extends CardSelectionExtension {
 
   /**
-   * Prepares the reading of the system block from the storage card when present.
-   *
-   * <p>Not all storage card types include a system block. This method should only be called for
-   * card types that support system block access.
-   *
-   * <p>Once this command is processed, the result is available in {@link StorageCard}.
-   *
-   * @return The current instance.
-   * @throws UnsupportedOperationException If the current card type does not support system block
-   *     access.
-   * @since 1.0.0
-   */
-  StorageCardSelectionExtension prepareReadSystemBlock();
-
-  /**
    * Prepares the reading of a specific block from the storage card.
    *
-   * <p>Block addresses start at 0 and the maximum value is provided by {@link
-   * ProductType#getBlockCount()}.
+   * <p>Block addresses start at 0 and the maximum value is equal to {@link
+   * ProductType#getBlockCount()} - 1.
    *
    * <p>Once this command is processed, the result is available in {@link StorageCard}.
    *
@@ -55,10 +40,11 @@ public interface StorageCardSelectionExtension extends CardSelectionExtension {
   /**
    * Prepares the reading of a range of blocks from the storage card.
    *
-   * <p>Block addresses start at 0 and the maximum value is provided by {@link
-   * ProductType#getBlockCount()}.
+   * <p>Block addresses start at 0 and the maximum value is equal to {@link
+   * ProductType#getBlockCount()} - 1.
    *
-   * <p>Once this command is processed, the result is available in {@link StorageCard}.
+   * <p>Once this command is processed, the result is available in {@link StorageCard} via {@link
+   * StorageCard#getBlock} and {@link StorageCard#getBlocks(int, int)} methods.
    *
    * @param fromBlockAddress The starting block address (inclusive).
    * @param toBlockAddress The ending block address (inclusive).
