@@ -35,35 +35,35 @@ public interface StorageCardTransactionManager {
   /**
    * Prepares the reading of a specific block from the storage card.
    *
-   * <p>Block numbers start at 0 and the maximum value is provided by {@link
+   * <p>Block addresses start at 0 and the maximum value is provided by {@link
    * ProductType#getBlockCount()}.
    *
    * <p>Once this command is processed, the result is available in {@link StorageCard}.
    *
-   * @param blockNumber The number of the block to be read.
+   * @param blockAddress The address of the block to be read.
    * @return The current instance.
-   * @throws IllegalArgumentException If the block number is out of range.
+   * @throws IllegalArgumentException If the block address is out of range.
    * @see ProductType#getBlockCount()
    * @since 1.0.0
    */
-  StorageCardTransactionManager prepareReadBlock(int blockNumber);
+  StorageCardTransactionManager prepareReadBlock(int blockAddress);
 
   /**
    * Prepares the reading of a range of blocks from the storage card.
    *
-   * <p>Block numbers start at 0 and the maximum value is provided by {@link
+   * <p>Block addresses start at 0 and the maximum value is provided by {@link
    * ProductType#getBlockCount()}.
    *
    * <p>Once this command is processed, the result is available in {@link StorageCard}.
    *
-   * @param fromBlockNumber The starting block number (inclusive).
-   * @param toBlockNumber The ending block number (inclusive).
+   * @param fromBlockAddress The starting block address (inclusive).
+   * @param toBlockAddress The ending block address (inclusive).
    * @return The current instance.
    * @throws IllegalArgumentException If one of the arguments is out of range.
    * @see ProductType#getBlockCount()
    * @since 1.0.0
    */
-  StorageCardTransactionManager prepareReadBlocks(int fromBlockNumber, int toBlockNumber);
+  StorageCardTransactionManager prepareReadBlocks(int fromBlockAddress, int toBlockAddress);
 
   /**
    * Prepares the writing of blocks of data to the storage card starting from a specific block
@@ -77,7 +77,7 @@ public interface StorageCardTransactionManager {
    * <p>Once this command is processed, the data will be available in {@link StorageCard} using the
    * dedicated block management methods.
    *
-   * @param fromBlockNumber The offset from which the blocks will be written.
+   * @param fromBlockAddress The offset from which the blocks will be written.
    * @param data The data to be written to the storage card.
    * @return The current instance of the {@link StorageCardTransactionManager}.
    * @throws IllegalArgumentException If data is null or its length is not a multiple of the block
@@ -85,7 +85,7 @@ public interface StorageCardTransactionManager {
    * @see ProductType#getBlockCount()
    * @since 1.0.0
    */
-  StorageCardTransactionManager prepareWriteBlocks(int fromBlockNumber, byte[] data);
+  StorageCardTransactionManager prepareWriteBlocks(int fromBlockAddress, byte[] data);
 
   /**
    * Processes all previously prepared commands and closes the physical channel if requested.

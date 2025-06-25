@@ -36,27 +36,27 @@ public interface StorageCard extends SmartCard {
   byte[] getUID();
 
   /**
-   * Retrieves the data block at the specified block number.
+   * Retrieves the data block at the specified block address.
    *
-   * @param blockNumber The number of the block to retrieve
+   * @param blockAddress The address of the block to retrieve
    * @return The data block as a byte array.
-   * @throws IllegalArgumentException If the block number is out of range.
+   * @throws IllegalArgumentException If the block address is out of range.
    * @since 1.0.0
    */
-  byte[] getBlock(int blockNumber);
+  byte[] getBlock(int blockAddress);
 
   /**
    * Retrieves the data blocks within the specified range from the memory image of the storage card.
-   * The returned array contains the blocks in order, from {@code fromBlockNumber} to {@code
-   * toBlockNumber}. If a block has not been previously read and stored in memory, its value is
+   * The returned array contains the blocks in order, from {@code fromBlockAddress} to {@code
+   * toBlockAddress}. If a block has not been previously read and stored in memory, its value is
    * replaced with 0s.
    *
-   * @param fromBlockNumber The starting block number (inclusive).
-   * @param toBlockNumber The ending block number (inclusive).
+   * @param fromBlockAddress The starting block address (inclusive).
+   * @param toBlockAddress The ending block address (inclusive).
    * @return A byte array containing the data blocks within the specified range.
-   * @throws IllegalArgumentException If {@code fromBlockNumber} is greater than {@code
-   *     toBlockNumber}, if either block number is negative, or if they exceed the available range
+   * @throws IllegalArgumentException If {@code fromBlockAddress} is greater than {@code
+   *     toBlockAddress}, if either block address is negative, or if they exceed the available range
    *     of the memory image.
    */
-  byte[] getBlocks(int fromBlockNumber, int toBlockNumber);
+  byte[] getBlocks(int fromBlockAddress, int toBlockAddress);
 }
