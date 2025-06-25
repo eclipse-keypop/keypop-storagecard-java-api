@@ -33,6 +33,21 @@ import org.eclipse.keypop.storagecard.card.StorageCard;
 public interface StorageCardTransactionManager {
 
   /**
+   * Prepares the reading of the system block from the storage card when present.
+   *
+   * <p>Not all storage card types include a system block. This method should only be called for
+   * card types that support system block access.
+   *
+   * <p>Once this command is processed, the result is available in {@link StorageCard}.
+   *
+   * @return The current instance.
+   * @throws UnsupportedOperationException If the current card type does not support system block
+   *     access.
+   * @since 1.0.0
+   */
+  StorageCardTransactionManager prepareReadSystemBlock();
+
+  /**
    * Prepares the reading of a specific block from the storage card.
    *
    * <p>Block addresses start at 0 and the maximum value is provided by {@link

@@ -36,6 +36,23 @@ public interface StorageCard extends SmartCard {
   byte[] getUID();
 
   /**
+   * Retrieves the system block from the storage card when available.
+   *
+   * <p>The system block contains card-specific metadata and configuration data such as access
+   * control settings. Not all storage card types provide access to system blocks.
+   *
+   * <p>The system block must have been previously read using a prepare method during card selection
+   * or transaction processing.
+   *
+   * @return The system block data as a byte array, or null if the system block has not been read
+   *     yet.
+   * @throws UnsupportedOperationException If the current card type does not support system block
+   *     access.
+   * @since 1.0.0
+   */
+  byte[] getSystemBlock();
+
+  /**
    * Retrieves the data block at the specified block address.
    *
    * @param blockAddress The address of the block to retrieve
