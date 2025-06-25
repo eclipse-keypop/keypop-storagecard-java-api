@@ -23,7 +23,7 @@ public final class StorageCardApiProperties {
    *
    * @since 1.0.0
    */
-  public static final String VERSION = "0.1";
+  public static final String VERSION = "0.2";
 
   /** Private constructor */
   private StorageCardApiProperties() {}

@@ -24,33 +24,34 @@ public interface StorageCardSelectionExtension extends CardSelectionExtension {
   /**
    * Prepares the reading of a specific block from the storage card.
    *
-   * <p>Block numbers start at 0 and the maximum value is provided by {@link
-   * ProductType#getBlockCount()}.
+   * <p>Block addresses start at 0 and the maximum value is equal to {@link
+   * ProductType#getBlockCount()} - 1.
    *
    * <p>Once this command is processed, the result is available in {@link StorageCard}.
    *
-   * @param blockNumber The number of the block to be read.
+   * @param blockAddress The address of the block to be read.
    * @return The current instance.
-   * @throws IllegalArgumentException If the block number is out of range.
+   * @throws IllegalArgumentException If the block address is out of range.
    * @see ProductType#getBlockCount()
    * @since 1.0.0
    */
-  StorageCardSelectionExtension prepareReadBlock(int blockNumber);
+  StorageCardSelectionExtension prepareReadBlock(int blockAddress);
 
   /**
    * Prepares the reading of a range of blocks from the storage card.
    *
-   * <p>Block numbers start at 0 and the maximum value is provided by {@link
-   * ProductType#getBlockCount()}.
+   * <p>Block addresses start at 0 and the maximum value is equal to {@link
+   * ProductType#getBlockCount()} - 1.
    *
-   * <p>Once this command is processed, the result is available in {@link StorageCard}.
+   * <p>Once this command is processed, the result is available in {@link StorageCard} via {@link
+   * StorageCard#getBlock} and {@link StorageCard#getBlocks(int, int)} methods.
    *
-   * @param fromBlockNumber The starting block number (inclusive).
-   * @param toBlockNumber The ending block number (inclusive).
+   * @param fromBlockAddress The starting block address (inclusive).
+   * @param toBlockAddress The ending block address (inclusive).
    * @return The current instance.
    * @throws IllegalArgumentException If one of the arguments is out of range.
    * @see ProductType#getBlockCount()
    * @since 1.0.0
    */
-  StorageCardSelectionExtension prepareReadBlocks(int fromBlockNumber, int toBlockNumber);
+  StorageCardSelectionExtension prepareReadBlocks(int fromBlockAddress, int toBlockAddress);
 }

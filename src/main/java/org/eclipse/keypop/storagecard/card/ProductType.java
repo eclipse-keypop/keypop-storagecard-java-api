@@ -23,27 +23,30 @@ public enum ProductType {
    *
    * @since 1.0.0
    */
-  MIFARE_ULTRALIGHT(16, 4),
+  MIFARE_ULTRALIGHT(16, 4, false),
 
   /**
    * ST Microelectronics ST25 / SRT512
    *
    * @since 1.0.0
    */
-  ST25_SRT512(16, 4);
+  ST25_SRT512(16, 4, true);
 
   private final int blockCount;
   private final int blockSize;
+  private final boolean hasSystemBlock;
 
   /**
    * Constructor.
    *
    * @param blockCount The number of blocks in the storage card.
    * @param blockSize The size of each block in bytes.
+   * @param hasSystemBlock Whether this card type has an accessible system block.
    */
-  ProductType(int blockCount, int blockSize) {
+  ProductType(int blockCount, int blockSize, boolean hasSystemBlock) {
     this.blockCount = blockCount;
     this.blockSize = blockSize;
+    this.hasSystemBlock = hasSystemBlock;
   }
 
   /**
@@ -67,5 +70,21 @@ public enum ProductType {
    */
   public int getBlockSize() {
     return blockSize;
+  }
+
+  /**
+   * Indicates whether this card type has an accessible system block.
+   *
+   * <p>For ST25/SRT512 cards, the system block is accessible at address 255. For MIFARE Ultralight
+   * cards, no system block is accessible through the API.
+   *
+   * <p>When a system block is available, it can be read using the appropriate prepare methods
+   * during card selection or transaction processing.
+   *
+   * @return true if this card type has an accessible system block, false otherwise.
+   * @since 1.0.0
+   */
+  public boolean hasSystemBlock() {
+    return hasSystemBlock;
   }
 }
