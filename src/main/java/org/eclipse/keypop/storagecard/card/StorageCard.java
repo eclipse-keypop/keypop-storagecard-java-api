@@ -12,6 +12,7 @@
 package org.eclipse.keypop.storagecard.card;
 
 import org.eclipse.keypop.reader.selection.spi.SmartCard;
+import org.eclipse.keypop.storagecard.transaction.StorageCardTransactionManager;
 
 /**
  * Represents a storage card with various methods to retrieve information and data from it.
@@ -41,8 +42,10 @@ public interface StorageCard extends SmartCard {
    * <p>The system block contains card-specific metadata and configuration data such as access
    * control settings. Not all storage card types provide access to system blocks.
    *
-   * <p>The system block must have been previously read using a prepare method during card selection
-   * or transaction processing.
+   * <p>The system block must have been previously read using a prepare method ({@link
+   * StorageCardSelectionExtension#prepareReadSystemBlock()} or {@link
+   * StorageCardTransactionManager#prepareReadSystemBlock()}) during card selection or transaction
+   * processing.
    *
    * @return The system block data as a byte array, or null if the system block has not been read
    *     yet.
