@@ -55,23 +55,29 @@ public interface StorageCard extends SmartCard {
   /**
    * Retrieves the data block at the specified block address.
    *
+   * <p>If the block has not been previously read and stored in memory, the returned byte array will
+   * be filled with zeros.
+   *
    * @param blockAddress The address of the block to retrieve
-   * @return The data block as a byte array.
-   * @throws IllegalArgumentException If the block address is out of range.
+   * @return The data block as a byte array, or a zero-filled byte array if the block has not been
+   *     read yet.
+   * @throws IndexOutOfBoundsException If the block address is out of range.
    * @since 1.0.0
    */
   byte[] getBlock(int blockAddress);
 
   /**
    * Retrieves the data blocks within the specified range from the memory image of the storage card.
-   * The returned array contains the blocks in order, from {@code fromBlockAddress} to {@code
-   * toBlockAddress}. If a block has not been previously read and stored in memory, its value is
-   * replaced with 0s.
+   *
+   * <p>The returned array contains the blocks in order, from {@code fromBlockAddress} to {@code
+   * toBlockAddress}. If a block has not been previously read and stored in memory, its
+   * corresponding bytes in the returned array will be filled with zeros.
    *
    * @param fromBlockAddress The starting block address (inclusive).
    * @param toBlockAddress The ending block address (inclusive).
-   * @return A byte array containing the data blocks within the specified range.
-   * @throws IllegalArgumentException If {@code fromBlockAddress} is greater than {@code
+   * @return A byte array containing the data blocks within the specified range. Unread blocks are
+   *     represented as zero-filled sections in the returned array.
+   * @throws IndexOutOfBoundsException If {@code fromBlockAddress} is greater than {@code
    *     toBlockAddress}, if either block address is negative, or if they exceed the available range
    *     of the memory image.
    */
