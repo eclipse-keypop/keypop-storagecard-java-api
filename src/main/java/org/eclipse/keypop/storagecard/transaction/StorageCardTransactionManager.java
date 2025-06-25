@@ -56,11 +56,11 @@ public interface StorageCardTransactionManager {
    *
    * <p>The data length must match the block size defined by the card's {@link ProductType}.
    *
-   * <p>Once this command is processed, the data will be written to the card and updated in the
-   * {@link StorageCard} memory image using the dedicated system block management methods. However,
-   * the value subsequently read from {@link StorageCard} may not accurately reflect the actual
-   * value present in the physical card until an explicit read operation is performed to refresh the
-   * memory image from the card.
+   * <p><strong>Important:</strong> After execution of this write command, the {@link StorageCard}
+   * memory image is <strong>not automatically updated</strong>. Some storage card technologies do
+   * not provide reliable status codes to confirm successful write operations. To ensure data
+   * consistency, an explicit read operation must be performed after the write to refresh the memory
+   * image and verify the actual content stored on the card.
    *
    * @param data The data to be written to the system block. The length must match the card's block
    *     size.
@@ -115,8 +115,11 @@ public interface StorageCardTransactionManager {
    * array divided by the block size of the storage card. The block size is provided by {@link
    * ProductType#getBlockSize()}.
    *
-   * <p>Once this command is processed, the data will be available in {@link StorageCard} using the
-   * dedicated block management methods.
+   * <p><strong>Important:</strong> After execution of this write command, the {@link StorageCard}
+   * memory image is <strong>not automatically updated</strong>. Some storage card technologies do
+   * not provide reliable status codes to confirm successful write operations. To ensure data
+   * consistency, explicit read operations must be performed after the write to refresh the memory
+   * image and verify the actual content stored on the card.
    *
    * @param fromBlockAddress The offset from which the blocks will be written.
    * @param data The data to be written to the storage card.
@@ -134,7 +137,13 @@ public interface StorageCardTransactionManager {
    * <p>All APDUs corresponding to the prepared commands are sent to the card, their responses are
    * retrieved and used to update the {@link StorageCard} associated with the transaction.
    *
-   * <p>For write commands, the {@link StorageCard} is updated only when the command is successful.
+   * <p><strong>For read commands:</strong> The {@link StorageCard} memory image is updated with the
+   * data retrieved from the card.
+   *
+   * <p><strong>For write commands:</strong> The {@link StorageCard} memory image is <strong>not
+   * updated</strong> even when the command appears successful, as some storage card technologies do
+   * not provide reliable confirmation of write completion. Applications should perform explicit
+   * read operations after writes to verify the actual card content and update the memory image.
    *
    * <p>The process is interrupted at the first failed command.
    *
