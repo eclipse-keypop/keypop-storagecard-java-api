@@ -48,6 +48,32 @@ public interface StorageCardTransactionManager {
   StorageCardTransactionManager prepareReadSystemBlock();
 
   /**
+   * Prepares the writing of data to the system block of the storage card when present.
+   *
+   * <p>System blocks contain card-specific metadata and configuration data. Not all storage card
+   * types include a system block that can be written to. This method should only be called for card
+   * types that support system block write access.
+   *
+   * <p>The data length must match the block size defined by the card's {@link ProductType}.
+   *
+   * <p>Once this command is processed, the data will be written to the card and updated in the
+   * {@link StorageCard} memory image using the dedicated system block management methods. However,
+   * the value subsequently read from {@link StorageCard} may not accurately reflect the actual value
+   * present in the physical card until an explicit read operation is performed to refresh the
+   * memory image from the card.
+   *
+   * @param data The data to be written to the system block. The length must match the card's block
+   *     size.
+   * @return The current instance.
+   * @throws IllegalArgumentException If data is null or its length does not match the block size.
+   * @throws UnsupportedOperationException If the current card type does not support system block
+   *     write access.
+   * @see ProductType#getBlockSize()
+   * @since 1.0.0
+   */
+  StorageCardTransactionManager prepareWriteSystemBlock(byte[] data);
+
+  /**
    * Prepares the reading of a specific block from the storage card.
    *
    * <p>Block addresses start at 0 and the maximum value is provided by {@link
