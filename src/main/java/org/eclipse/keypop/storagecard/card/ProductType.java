@@ -23,18 +23,19 @@ public enum ProductType {
    *
    * @since 1.0.0
    */
-  MIFARE_ULTRALIGHT(16, 4, false),
+  MIFARE_ULTRALIGHT(16, 4, false, true),
 
   /**
    * ST Microelectronics ST25 / SRT512
    *
    * @since 1.0.0
    */
-  ST25_SRT512(16, 4, true);
+  ST25_SRT512(16, 4, true, false);
 
   private final int blockCount;
   private final int blockSize;
   private final boolean hasSystemBlock;
+  private final boolean hasWriteAcknowledgment;
 
   /**
    * Constructor.
@@ -42,11 +43,15 @@ public enum ProductType {
    * @param blockCount The number of blocks in the storage card.
    * @param blockSize The size of each block in bytes.
    * @param hasSystemBlock Whether this card type has an accessible system block.
+   * @param hasWriteAcknowledgment Whether this card provides a reliable acknowledgment confirming
+   *     successful write operations.
    */
-  ProductType(int blockCount, int blockSize, boolean hasSystemBlock) {
+  ProductType(
+      int blockCount, int blockSize, boolean hasSystemBlock, boolean hasWriteAcknowledgment) {
     this.blockCount = blockCount;
     this.blockSize = blockSize;
     this.hasSystemBlock = hasSystemBlock;
+    this.hasWriteAcknowledgment = hasWriteAcknowledgment;
   }
 
   /**
@@ -81,10 +86,26 @@ public enum ProductType {
    * <p>When a system block is available, it can be read using the appropriate prepare methods
    * during card selection or transaction processing.
    *
-   * @return true if this card type has an accessible system block, false otherwise.
+   * @return {@code true} if this card type has an accessible system block, false otherwise.
    * @since 1.0.0
    */
   public boolean hasSystemBlock() {
     return hasSystemBlock;
+  }
+
+  /**
+   * Indicates whether this storage card provides a reliable acknowledgment after write operations.
+   *
+   * <p>If this method returns {@code true}, the card guarantees that a successful response to a
+   * write command means the data has been correctly stored, and no additional verification is
+   * required. If it returns {@code false}, the card does not guarantee the actual completion of the
+   * write, and a verification read must be performed to ensure data consistency.
+   *
+   * @return {@code true} if the card provides a reliable write acknowledgment, {@code false}
+   *     otherwise.
+   * @since 1.0.0
+   */
+  public boolean hasWriteAcknowledgment() {
+    return hasWriteAcknowledgment;
   }
 }
