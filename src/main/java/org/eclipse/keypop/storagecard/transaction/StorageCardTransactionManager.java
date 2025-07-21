@@ -115,11 +115,12 @@ public interface StorageCardTransactionManager {
    * array divided by the block size of the storage card. The block size is provided by {@link
    * ProductType#getBlockSize()}.
    *
-   * <p><strong>Important:</strong> After execution of this write command, the {@link StorageCard}
-   * memory image is <strong>not automatically updated</strong>. Some storage card technologies do
-   * not provide reliable status codes to confirm successful write operations. To ensure data
-   * consistency, explicit read operations must be performed after the write to refresh the memory
-   * image and verify the actual content stored on the card.
+   * <p><strong>Important:</strong> Some storage card technologies do not provide reliable status
+   * codes to confirm successful write operations. For such cards (e.g., SRT512/ST25), the library
+   * automatically performs a verification read after each write to ensure that the data has been
+   * correctly stored. For cards that provide a reliable write acknowledgment, no additional read is
+   * performed. In all cases, the library guarantees the integrity of the written data, and the
+   * application does not need to explicitly perform verification reads.
    *
    * @param fromBlockAddress The offset from which the blocks will be written.
    * @param data The data to be written to the storage card.
