@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `CardIOException` constructor now accepts `blockAddress` parameter.
   - `ReaderIOException` constructor now accepts `blockAddress` parameter.
   - `UnexpectedCommandStatusException` constructor now accepts `blockAddress` parameter.
+* **Product type capability**:
+  New `ProductType.hasWriteAcknowledgment()` method to indicate whether a storage card provides a reliable
+  acknowledgment after write operations.
 ### Changed
 - **Write operation behavior**: API contract updated for `prepareWriteBlocks()` method regarding verification reads:
   - The API now specifies that implementations must handle verification reads transparently for storage cards without
