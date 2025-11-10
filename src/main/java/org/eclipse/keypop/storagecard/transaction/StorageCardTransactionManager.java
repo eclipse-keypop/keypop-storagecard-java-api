@@ -11,6 +11,7 @@
  ************************************************************************************** */
 package org.eclipse.keypop.storagecard.transaction;
 
+import org.eclipse.keypop.reader.ChannelControl;
 import org.eclipse.keypop.reader.transaction.spi.CardTransactionManager;
 import org.eclipse.keypop.storagecard.card.ProductType;
 import org.eclipse.keypop.storagecard.card.StorageCard;
@@ -26,10 +27,10 @@ import org.eclipse.keypop.storagecard.card.StorageCard;
  *   <li>Manage the communication channel with the card
  * </ul>
  *
- * <p><b>Processing commands:</b>
+ * <p><b>Note about processing commands</b>
  *
- * <p>The inherited {@code processCommands()} method processes all previously prepared commands and
- * closes the physical channel if requested.
+ * <p>The inherited {@link #processCommands(ChannelControl)} method processes all previously
+ * prepared commands and closes the physical channel if requested.
  *
  * <p>All APDUs corresponding to the prepared commands are sent to the card, their responses are
  * retrieved and used to update the {@link StorageCard} associated with the transaction.
