@@ -26,9 +26,28 @@ import org.eclipse.keypop.storagecard.card.StorageCard;
  *   <li>Manage the communication channel with the card
  * </ul>
  *
+ * <p><b>Processing commands:</b>
+ *
+ * <p>The inherited {@code processCommands()} method processes all previously prepared commands and
+ * closes the physical channel if requested.
+ *
+ * <p>All APDUs corresponding to the prepared commands are sent to the card, their responses are
+ * retrieved and used to update the {@link StorageCard} associated with the transaction.
+ *
+ * <p><strong>For read commands:</strong> The {@link StorageCard} memory image is updated with the
+ * data retrieved from the card.
+ *
+ * <p><strong>For write commands:</strong> The {@link StorageCard} memory image is <strong>not
+ * updated</strong> even when the command appears successful, as some storage card technologies do
+ * not provide reliable confirmation of write completion. Applications should perform explicit read
+ * operations after writes to verify the actual card content and update the memory image.
+ *
+ * <p>The process is interrupted at the first failed command.
+ *
  * @since 1.0.0
  */
-public interface StorageCardTransactionManager extends CardTransactionManager {
+public interface StorageCardTransactionManager
+    extends CardTransactionManager<StorageCardTransactionManager> {
 
   /**
    * Prepares the reading of the system block from the storage card when present.
