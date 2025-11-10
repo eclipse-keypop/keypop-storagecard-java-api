@@ -11,6 +11,7 @@
  ************************************************************************************** */
 package org.eclipse.keypop.storagecard;
 
+import org.eclipse.keypop.reader.ReaderCommunicationException;
 import org.eclipse.keypop.storagecard.card.StorageCard;
 
 /**
@@ -22,7 +23,11 @@ import org.eclipse.keypop.storagecard.card.StorageCard;
  *
  * @since 1.0.0
  */
-public final class ReaderIOException extends StorageCardException {
+public final class ReaderIOException extends ReaderCommunicationException
+    implements StorageCardException {
+
+  private final Integer blockAddress;
+
   /**
    * Creates a new exception indicating a reader communication error during the execution of a
    * storage card command.
@@ -32,7 +37,8 @@ public final class ReaderIOException extends StorageCardException {
    * @since 1.0.0
    */
   public ReaderIOException(Integer blockAddress, String message) {
-    super(blockAddress, message);
+    super(message);
+    this.blockAddress = blockAddress;
   }
 
   /**
@@ -45,6 +51,17 @@ public final class ReaderIOException extends StorageCardException {
    * @since 1.0.0
    */
   public ReaderIOException(Integer blockAddress, String message, Throwable cause) {
-    super(blockAddress, message, cause);
+    super(message, cause);
+    this.blockAddress = blockAddress;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public Integer getBlockAddress() {
+    return blockAddress;
   }
 }

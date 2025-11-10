@@ -11,9 +11,8 @@
  ************************************************************************************** */
 package org.eclipse.keypop.storagecard.transaction;
 
-import org.eclipse.keypop.storagecard.CardIOException;
-import org.eclipse.keypop.storagecard.ReaderIOException;
-import org.eclipse.keypop.storagecard.UnexpectedCommandStatusException;
+import org.eclipse.keypop.reader.ChannelControl;
+import org.eclipse.keypop.reader.transaction.spi.CardTransactionManager;
 import org.eclipse.keypop.storagecard.card.ProductType;
 import org.eclipse.keypop.storagecard.card.StorageCard;
 
@@ -28,9 +27,28 @@ import org.eclipse.keypop.storagecard.card.StorageCard;
  *   <li>Manage the communication channel with the card
  * </ul>
  *
+ * <p><b>Note about processing commands</b>
+ *
+ * <p>The inherited {@link #processCommands(ChannelControl)} method processes all previously
+ * prepared commands and closes the physical channel if requested.
+ *
+ * <p>All APDUs corresponding to the prepared commands are sent to the card, their responses are
+ * retrieved and used to update the {@link StorageCard} associated with the transaction.
+ *
+ * <p><strong>For read commands:</strong> The {@link StorageCard} memory image is updated with the
+ * data retrieved from the card.
+ *
+ * <p><strong>For write commands:</strong> The {@link StorageCard} memory image is <strong>not
+ * updated</strong> even when the command appears successful, as some storage card technologies do
+ * not provide reliable confirmation of write completion. Applications should perform explicit read
+ * operations after writes to verify the actual card content and update the memory image.
+ *
+ * <p>The process is interrupted at the first failed command.
+ *
  * @since 1.0.0
  */
-public interface StorageCardTransactionManager {
+public interface StorageCardTransactionManager
+    extends CardTransactionManager<StorageCardTransactionManager> {
 
   /**
    * Prepares the reading of the system block from the storage card when present.
@@ -131,32 +149,4 @@ public interface StorageCardTransactionManager {
    * @since 1.0.0
    */
   StorageCardTransactionManager prepareWriteBlocks(int fromBlockAddress, byte[] data);
-
-  /**
-   * Processes all previously prepared commands and closes the physical channel if requested.
-   *
-   * <p>All APDUs corresponding to the prepared commands are sent to the card, their responses are
-   * retrieved and used to update the {@link StorageCard} associated with the transaction.
-   *
-   * <p><strong>For read commands:</strong> The {@link StorageCard} memory image is updated with the
-   * data retrieved from the card.
-   *
-   * <p><strong>For write commands:</strong> The {@link StorageCard} memory image is <strong>not
-   * updated</strong> even when the command appears successful, as some storage card technologies do
-   * not provide reliable confirmation of write completion. Applications should perform explicit
-   * read operations after writes to verify the actual card content and update the memory image.
-   *
-   * <p>The process is interrupted at the first failed command.
-   *
-   * @param channelControl Policy for managing the physical channel after executing commands to the
-   *     card.
-   * @return The current instance.
-   * @throws ReaderIOException If a communication error with the card reader or the cryptographic
-   *     module reader occurs.
-   * @throws CardIOException If a communication error with the card occurs.
-   * @throws UnexpectedCommandStatusException If one of the prepared command failed.
-   * @since 1.0.0
-   */
-  StorageCardTransactionManager processCommands(ChannelControl channelControl)
-      throws ReaderIOException, CardIOException, UnexpectedCommandStatusException;
 }
