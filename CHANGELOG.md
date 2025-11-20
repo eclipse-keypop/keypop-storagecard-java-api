@@ -8,9 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Exception hierarchy refactoring**: `StorageCardException` transformed from abstract class to interface.
 - **Exception inheritance**: All storage card exceptions now extend corresponding `keypop-reader-java-api` exceptions:
-  - `ReaderIOException` extends `ReaderCommunicationException` and implements `StorageCardException`.
-  - `CardIOException` extends `CardCommunicationException` and implements `StorageCardException`.
-  - `UnexpectedCommandStatusException` extends `InvalidCardResponseException` and implements `StorageCardException`.
+  - `SCReaderCommunicationException` extends `ReaderCommunicationException` and implements `StorageCardException`.
+  - `SCCardCommunicationException` extends `CardCommunicationException` and implements `StorageCardException`.
+  - `SCInvalidCardResponseException` extends `InvalidCardResponseException` and implements `StorageCardException`.
 - **Transaction manager hierarchy**: `StorageCardTransactionManager` now extends `CardTransactionManager` from
   `keypop-reader-java-api`, inheriting the `processCommands()` method.
 ### Removed
