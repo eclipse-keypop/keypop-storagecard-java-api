@@ -11,6 +11,7 @@
  ************************************************************************************** */
 package org.eclipse.keypop.storagecard;
 
+import org.eclipse.keypop.reader.selection.InvalidCardResponseException;
 import org.eclipse.keypop.storagecard.card.StorageCard;
 
 /**
@@ -23,7 +24,23 @@ import org.eclipse.keypop.storagecard.card.StorageCard;
  *
  * @since 1.0.0
  */
-public final class UnexpectedCommandStatusException extends StorageCardException {
+public final class SCInvalidCardResponseException extends InvalidCardResponseException
+    implements StorageCardException {
+
+  private final Integer blockAddress;
+
+  /**
+   * Creates a new exception indicating a card status code error during the execution of a storage
+   * card command.
+   *
+   * @param blockAddress The block address involved in the error, or {@code null} if not relevant.
+   * @param message The message describing the exception context.
+   * @since 1.0.0
+   */
+  public SCInvalidCardResponseException(Integer blockAddress, String message) {
+    super(message);
+    this.blockAddress = blockAddress;
+  }
 
   /**
    * Creates a new exception indicating a card status code error during the execution of a storage
@@ -34,7 +51,18 @@ public final class UnexpectedCommandStatusException extends StorageCardException
    * @param cause The underlying cause of the exception.
    * @since 1.0.0
    */
-  public UnexpectedCommandStatusException(Integer blockAddress, String message, Throwable cause) {
-    super(blockAddress, message, cause);
+  public SCInvalidCardResponseException(Integer blockAddress, String message, Throwable cause) {
+    super(message, cause);
+    this.blockAddress = blockAddress;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 1.0.0
+   */
+  @Override
+  public Integer getBlockAddress() {
+    return blockAddress;
   }
 }
