@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 [unreleased]
+
+## [1.0.0] - 2025-11-21
 ### Changed
 - **Exception hierarchy refactoring**: `StorageCardException` transformed from abstract class to interface.
 - **Exception inheritance**: All storage card exceptions now extend corresponding `keypop-reader-java-api` exceptions:
@@ -16,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - **Channel control**: Removed `ChannelControl` enum, now managed by parent `CardTransactionManager` interface.
 ### Upgraded
-- Keypop Reader API `2.0.1` -> `2.1.0`.
+- Keypop Reader API `2.0.1` -> `2.1.0`
 
 ## [0.3.0] - 2025-07-21
 ### Added
@@ -68,7 +70,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2025-06-18
 This is the initial release.
 
-[unreleased]: https://github.com/eclipse-keypop/keypop-storagecard-java-api/compare/0.3.0...HEAD
+[unreleased]: https://github.com/eclipse-keypop/keypop-storagecard-java-api/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/eclipse-keypop/keypop-storagecard-java-api/compare/0.3.0...1.0.0
 [0.3.0]: https://github.com/eclipse-keypop/keypop-storagecard-java-api/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/eclipse-keypop/keypop-storagecard-java-api/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/eclipse-keypop/keypop-storagecard-java-api/releases/tag/0.1.0
