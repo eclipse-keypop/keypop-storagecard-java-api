@@ -6,6 +6,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [unreleased]
 
+## [1.1.0] - 2025-12-05
+### Added
+- **Mifare Classic support**: New product types `MIFARE_CLASSIC_1K` and `MIFARE_CLASSIC_4K` in
+  `ProductType` enum to support NXP Mifare Classic 1K (64 blocks) and 4K (256 blocks) cards.
+- **Authentication capability**: New `ProductType.hasAuthentication()` method to indicate whether a
+  storage card requires authentication before read/write operations.
+- **Mifare Classic key types**: New `MifareClassicKeyType` enum with `KEY_A` and `KEY_B` constants
+  for Mifare Classic authentication.
+- **Authentication methods**: New authentication methods for Mifare Classic cards:
+  - `StorageCardSelectionExtension.prepareMifareClassicAuthenticate(int blockAddress, MifareClassicKeyType, byte[] key)`
+  - `StorageCardSelectionExtension.prepareMifareClassicAuthenticate(int blockAddress, MifareClassicKeyType, int keyNumber)`
+  - `StorageCardTransactionManager.prepareMifareClassicAuthenticate(int blockAddress, MifareClassicKeyType, byte[] key)`
+  - `StorageCardTransactionManager.prepareMifareClassicAuthenticate(int blockAddress, MifareClassicKeyType, int keyNumber)`
+- **Authentication exception**: New `SCAuthenticationFailedException` for handling Mifare Classic
+  authentication failures.
+- **ST25-specific system block methods**: New dedicated methods for ST25/SRT512 system block access:
+  - `StorageCardTransactionManager.prepareSt25ReadSystemBlock()`
+  - `StorageCardTransactionManager.prepareSt25WriteSystemBlock(byte[] data)`
+### Changed
+- **System block documentation**: Enhanced `StorageCard.getSystemBlock()` documentation to clarify
+  it is specific to ST25/SRT512 cards.
+- **Package documentation**: Improved `package-info.java` with detailed descriptions of all public
+  API elements.
+### Deprecated
+- `StorageCardTransactionManager.prepareReadSystemBlock()` - Use `prepareSt25ReadSystemBlock()`
+  instead.
+- `StorageCardTransactionManager.prepareWriteSystemBlock(byte[])` - Use
+  `prepareSt25WriteSystemBlock(byte[])` instead.
+
 ## [1.0.0] - 2025-11-21
 ### Changed
 - **Exception hierarchy refactoring**: `StorageCardException` transformed from abstract class to interface.
@@ -70,7 +99,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2025-06-18
 This is the initial release.
 
-[unreleased]: https://github.com/eclipse-keypop/keypop-storagecard-java-api/compare/1.0.0...HEAD
+[unreleased]: https://github.com/eclipse-keypop/keypop-storagecard-java-api/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/eclipse-keypop/keypop-storagecard-java-api/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/eclipse-keypop/keypop-storagecard-java-api/compare/0.3.0...1.0.0
 [0.3.0]: https://github.com/eclipse-keypop/keypop-storagecard-java-api/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/eclipse-keypop/keypop-storagecard-java-api/compare/0.1.0...0.2.0

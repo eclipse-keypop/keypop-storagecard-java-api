@@ -12,6 +12,7 @@
 package org.eclipse.keypop.storagecard.card;
 
 import org.eclipse.keypop.reader.selection.spi.CardSelectionExtension;
+import org.eclipse.keypop.storagecard.MifareClassicKeyType;
 
 /**
  * Extends the {@link CardSelectionExtension} interface of the "Keypop Reader API" to provide means
@@ -54,4 +55,47 @@ public interface StorageCardSelectionExtension extends CardSelectionExtension {
    * @since 1.0.0
    */
   StorageCardSelectionExtension prepareReadBlocks(int fromBlockAddress, int toBlockAddress);
+
+  /**
+   * Prepares a Mifare Classic authentication command using a provided key.
+   *
+   * <p>This method is specific to Mifare Classic cards and must be called before reading from or
+   * writing to protected sectors. The authentication applies to the entire sector containing the
+   * specified block address.
+   *
+   * <p>The key must be a 6-byte array representing the Mifare Classic key value.
+   *
+   * @param blockAddress The address of any block within the sector to authenticate.
+   * @param mifareClassicKeyType The type of key to use (Key A or Key B).
+   * @param key The 6-byte key data for authentication.
+   * @return The current instance.
+   * @throws IllegalArgumentException If the block address is out of range, or if the key is null or
+   *     not exactly 6 bytes long.
+   * @throws UnsupportedOperationException If the current card type does not support authentication.
+   * @since 1.1.0
+   */
+  StorageCardSelectionExtension prepareMifareClassicAuthenticate(
+      int blockAddress, MifareClassicKeyType mifareClassicKeyType, byte[] key);
+
+  /**
+   * Prepares a Mifare Classic authentication command using a key stored in the reader.
+   *
+   * <p>This method is specific to Mifare Classic cards and must be called before reading from or
+   * writing to protected sectors. The authentication applies to the entire sector containing the
+   * specified block address.
+   *
+   * <p>The key is referenced by its storage index in the reader's key storage. This allows using
+   * pre-configured keys without transmitting them over the communication channel.
+   *
+   * @param blockAddress The address of any block within the sector to authenticate.
+   * @param mifareClassicKeyType The type of key to use (Key A or Key B).
+   * @param keyNumber The index of the key in the reader's key storage.
+   * @return The current instance.
+   * @throws IllegalArgumentException If the block address is out of range, or if the key number is
+   *     invalid.
+   * @throws UnsupportedOperationException If the current card type does not support authentication.
+   * @since 1.1.0
+   */
+  StorageCardSelectionExtension prepareMifareClassicAuthenticate(
+      int blockAddress, MifareClassicKeyType mifareClassicKeyType, int keyNumber);
 }
