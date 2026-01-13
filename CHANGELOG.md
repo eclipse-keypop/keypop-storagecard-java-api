@@ -27,8 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **System block documentation**: Enhanced `StorageCard.getSystemBlock()` documentation to clarify
   it is specific to ST25/SRT512 cards.
-- **Package documentation**: Improved `package-info.java` with detailed descriptions of all public
-  API elements.
 ### Deprecated
 - `StorageCardTransactionManager.prepareReadSystemBlock()` - Use `prepareSt25ReadSystemBlock()`
   instead.
