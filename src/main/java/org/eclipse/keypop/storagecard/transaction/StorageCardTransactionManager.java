@@ -204,6 +204,16 @@ public interface StorageCardTransactionManager
    *
    * <p>The key must be a 6-byte array representing the Mifare Classic key value.
    *
+   * <p>When the key value is provided this way, it will be sent to the reader to be stored as a
+   * volatile key at index 0 (see Load Key command of the PC/SC standard). This volatile key is
+   * temporary and will be erased after usage, when the reader is powered off.
+   *
+   * <p><strong>Security Note:</strong> This method transmits the key value over the communication
+   * channel between the application and the reader. For production environments and
+   * security-sensitive applications, it is recommended to use {@link
+   * #prepareMifareClassicAuthenticate(int, MifareClassicKeyType, int)} instead, which references a
+   * pre-stored key in the reader without transmitting the key value.
+   *
    * <p>Once authenticated, subsequent read and write operations within the same sector can be
    * performed without re-authentication, until the card is removed from the field or another sector
    * is accessed.
