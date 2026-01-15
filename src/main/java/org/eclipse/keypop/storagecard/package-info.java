@@ -1,2 +1,2 @@
-/** Contains the factories and builders to create the public elements of the extension. */
+/** Contains the factories, builders, and exceptions for the Storage Card API. */
 package org.eclipse.keypop.storagecard;

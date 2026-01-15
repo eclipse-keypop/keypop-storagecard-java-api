@@ -23,19 +23,34 @@ public enum ProductType {
    *
    * @since 1.0.0
    */
-  MIFARE_ULTRALIGHT(16, 4, false, true),
+  MIFARE_ULTRALIGHT(16, 4, false, true, false),
+
+  /**
+   * NXP Mifare Classic 1K
+   *
+   * @since 1.1.0
+   */
+  MIFARE_CLASSIC_1K(64, 16, false, true, true),
+
+  /**
+   * NXP Mifare Classic 4K
+   *
+   * @since 1.1.0
+   */
+  MIFARE_CLASSIC_4K(256, 16, false, true, true),
 
   /**
    * ST Microelectronics ST25 / SRT512
    *
    * @since 1.0.0
    */
-  ST25_SRT512(16, 4, true, false);
+  ST25_SRT512(16, 4, true, false, false);
 
   private final int blockCount;
   private final int blockSize;
   private final boolean hasSystemBlock;
   private final boolean hasWriteAcknowledgment;
+  private final boolean hasAuthentication;
 
   /**
    * Constructor.
@@ -45,13 +60,20 @@ public enum ProductType {
    * @param hasSystemBlock Whether this card type has an accessible system block.
    * @param hasWriteAcknowledgment Whether this card provides a reliable acknowledgment confirming
    *     successful write operations.
+   * @param hasAuthentication Whether this card type requires authentication before read/write
+   *     operations.
    */
   ProductType(
-      int blockCount, int blockSize, boolean hasSystemBlock, boolean hasWriteAcknowledgment) {
+      int blockCount,
+      int blockSize,
+      boolean hasSystemBlock,
+      boolean hasWriteAcknowledgment,
+      boolean hasAuthentication) {
     this.blockCount = blockCount;
     this.blockSize = blockSize;
     this.hasSystemBlock = hasSystemBlock;
     this.hasWriteAcknowledgment = hasWriteAcknowledgment;
+    this.hasAuthentication = hasAuthentication;
   }
 
   /**
@@ -107,5 +129,23 @@ public enum ProductType {
    */
   public boolean hasWriteAcknowledgment() {
     return hasWriteAcknowledgment;
+  }
+
+  /**
+   * Indicates whether this storage card type requires authentication before read/write operations.
+   *
+   * <p>If this method returns {@code true}, the card requires successful authentication to a sector
+   * before read or write operations can be performed on blocks within that sector. For Mifare
+   * Classic cards, authentication must be performed using Key A or Key B with the appropriate
+   * authentication methods.
+   *
+   * <p>If this method returns {@code false}, the card allows direct read/write operations without
+   * prior authentication.
+   *
+   * @return {@code true} if the card requires authentication, {@code false} otherwise.
+   * @since 1.1.0
+   */
+  public boolean hasAuthentication() {
+    return hasAuthentication;
   }
 }

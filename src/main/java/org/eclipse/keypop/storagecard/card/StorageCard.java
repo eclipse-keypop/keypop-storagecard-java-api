@@ -40,10 +40,12 @@ public interface StorageCard extends SmartCard {
    * Retrieves the system block from the storage card when available.
    *
    * <p>The system block contains card-specific metadata and configuration data such as access
-   * control settings. Not all storage card types provide access to system blocks.
+   * control settings. This feature is specific to ST25/SRT512 cards which provide access to a
+   * system block at address 255.
    *
-   * <p>The system block must have been previously read using a the {{@link
-   * StorageCardTransactionManager#prepareReadSystemBlock()}) method.
+   * <p>The system block must have been previously read using the {@link
+   * StorageCardTransactionManager#prepareSt25ReadSystemBlock()} method (or the deprecated {@link
+   * StorageCardTransactionManager#prepareReadSystemBlock()} method).
    *
    * @return The system block data as a byte array, or null if the system block has not been read
    *     yet.
