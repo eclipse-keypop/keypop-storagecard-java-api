@@ -13,6 +13,7 @@ package org.eclipse.keypop.storagecard.transaction;
 
 import org.eclipse.keypop.reader.ChannelControl;
 import org.eclipse.keypop.reader.transaction.spi.CardTransactionManager;
+import org.eclipse.keypop.storagecard.MifareClassicKeyType;
 import org.eclipse.keypop.storagecard.card.ProductType;
 import org.eclipse.keypop.storagecard.card.StorageCard;
 
@@ -62,7 +63,10 @@ public interface StorageCardTransactionManager
    * @throws UnsupportedOperationException If the current card type does not support system block
    *     access.
    * @since 1.0.0
+   * @deprecated Use {@link #prepareSt25ReadSystemBlock()} instead. This method will be removed in a
+   *     future version.
    */
+  @Deprecated
   StorageCardTransactionManager prepareReadSystemBlock();
 
   /**
@@ -88,8 +92,49 @@ public interface StorageCardTransactionManager
    *     write access.
    * @see ProductType#getBlockSize()
    * @since 1.0.0
+   * @deprecated Use {@link #prepareSt25WriteSystemBlock(byte[])} instead. This method will be
+   *     removed in a future version.
    */
+  @Deprecated
   StorageCardTransactionManager prepareWriteSystemBlock(byte[] data);
+
+  /**
+   * Prepares the reading of the system block from an ST25/SRT512 storage card.
+   *
+   * <p>This method is specific to ST25 and SRT512 card types which provide access to a system block
+   * at address 255 containing card-specific metadata and configuration data.
+   *
+   * <p>Once this command is processed, the result is available in {@link StorageCard}.
+   *
+   * @return The current instance.
+   * @throws UnsupportedOperationException If the current card type is not ST25/SRT512.
+   * @since 1.1.0
+   */
+  StorageCardTransactionManager prepareSt25ReadSystemBlock();
+
+  /**
+   * Prepares the writing of data to the system block of an ST25/SRT512 storage card.
+   *
+   * <p>This method is specific to ST25 and SRT512 card types which provide access to a system block
+   * at address 255 containing card-specific metadata and configuration data.
+   *
+   * <p>The data length must match the block size defined by the card's {@link ProductType}.
+   *
+   * <p><strong>Important:</strong> After execution of this write command, the {@link StorageCard}
+   * memory image is <strong>not automatically updated</strong>. ST25/SRT512 cards do not provide
+   * reliable status codes to confirm successful write operations. To ensure data consistency, an
+   * explicit read operation must be performed after the write to refresh the memory image and
+   * verify the actual content stored on the card.
+   *
+   * @param data The data to be written to the system block. The length must match the card's block
+   *     size.
+   * @return The current instance.
+   * @throws IllegalArgumentException If data is null or its length does not match the block size.
+   * @throws UnsupportedOperationException If the current card type is not ST25/SRT512.
+   * @see ProductType#getBlockSize()
+   * @since 1.1.0
+   */
+  StorageCardTransactionManager prepareSt25WriteSystemBlock(byte[] data);
 
   /**
    * Prepares the reading of a specific block from the storage card.
@@ -149,4 +194,66 @@ public interface StorageCardTransactionManager
    * @since 1.0.0
    */
   StorageCardTransactionManager prepareWriteBlocks(int fromBlockAddress, byte[] data);
+
+  /**
+   * Prepares a Mifare Classic authentication command using a provided key.
+   *
+   * <p>This method is specific to Mifare Classic cards and must be called before reading from or
+   * writing to protected sectors. The authentication applies to the entire sector containing the
+   * specified block address.
+   *
+   * <p>The key must be a 6-byte array representing the Mifare Classic key value.
+   *
+   * <p>When the key value is provided this way, it will be sent to the reader to be stored as a
+   * volatile key at index 0 (see Load Key command of the PC/SC standard). This volatile key is
+   * temporary and will be erased after usage, when the reader is powered off.
+   *
+   * <p><strong>Security Note:</strong> This method transmits the key value over the communication
+   * channel between the application and the reader. For production environments and
+   * security-sensitive applications, it is recommended to use {@link
+   * #prepareMifareClassicAuthenticate(int, MifareClassicKeyType, int)} instead, which references a
+   * pre-stored key in the reader without transmitting the key value.
+   *
+   * <p>Once authenticated, subsequent read and write operations within the same sector can be
+   * performed without re-authentication, until the card is removed from the field or another sector
+   * is accessed.
+   *
+   * @param blockAddress The address of any block within the sector to authenticate.
+   * @param mifareClassicKeyType The type of key to use (Key A or Key B).
+   * @param key The 6-byte key data for authentication.
+   * @return The current instance.
+   * @throws IllegalArgumentException If the block address is out of range, or if the key is null or
+   *     not exactly 6 bytes long.
+   * @throws UnsupportedOperationException If the current card type does not support authentication.
+   * @since 1.1.0
+   */
+  StorageCardTransactionManager prepareMifareClassicAuthenticate(
+      int blockAddress, MifareClassicKeyType mifareClassicKeyType, byte[] key);
+
+  /**
+   * Prepares a Mifare Classic authentication command using a key stored in the reader.
+   *
+   * <p>This method is specific to Mifare Classic cards and must be called before reading from or
+   * writing to protected sectors. The authentication applies to the entire sector containing the
+   * specified block address.
+   *
+   * <p>The key is referenced by its storage index in the reader's key storage. This allows using
+   * pre-configured keys without transmitting them over the communication channel, providing
+   * enhanced security.
+   *
+   * <p>Once authenticated, subsequent read and write operations within the same sector can be
+   * performed without re-authentication, until the card is removed from the field or another sector
+   * is accessed.
+   *
+   * @param blockAddress The address of any block within the sector to authenticate.
+   * @param mifareClassicKeyType The type of key to use (Key A or Key B).
+   * @param keyNumber The index of the key in the reader's key storage.
+   * @return The current instance.
+   * @throws IllegalArgumentException If the block address is out of range, or if the key number is
+   *     invalid.
+   * @throws UnsupportedOperationException If the current card type does not support authentication.
+   * @since 1.1.0
+   */
+  StorageCardTransactionManager prepareMifareClassicAuthenticate(
+      int blockAddress, MifareClassicKeyType mifareClassicKeyType, int keyNumber);
 }
