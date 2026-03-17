@@ -69,7 +69,7 @@ public interface StorageCardSelectionExtension extends CardSelectionExtension {
    *     access.
    * @since 1.2.0
    */
-  StorageCardSelectionExtension prepareReadSystemBlock();
+  StorageCardSelectionExtension prepareSt25ReadSystemBlock();
 
   /**
    * Prepares a Mifare Classic authentication command using a provided key.
