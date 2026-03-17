@@ -57,16 +57,15 @@ public interface StorageCardSelectionExtension extends CardSelectionExtension {
   StorageCardSelectionExtension prepareReadBlocks(int fromBlockAddress, int toBlockAddress);
 
   /**
-   * Prepares the reading of the system block from the storage card when present.
+   * Prepares the reading of the system block from an ST25/SRT512 storage card.
    *
-   * <p>Not all storage card types include a system block. This method should only be called for
-   * card types that support system block access.
+   * <p>This method is specific to ST25 and SRT512 card types which provide access to a system block
+   * at address 255 containing card-specific metadata and configuration data.
    *
-   * <p>Once this command is processed, the result is available in {@link StorageCard} via {@link
-   * StorageCard#getBlock} and {@link StorageCard#getBlocks(int, int)} methods.
+   * <p>Once this command is processed, the result is available in {@link StorageCard}.
+   *
    * @return The current instance.
-   * @throws UnsupportedOperationException If the current card type does not support system block
-   *     access.
+   * @throws UnsupportedOperationException If the current card type is not ST25/SRT512.
    * @since 1.2.0
    */
   StorageCardSelectionExtension prepareSt25ReadSystemBlock();
