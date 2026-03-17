@@ -57,6 +57,21 @@ public interface StorageCardSelectionExtension extends CardSelectionExtension {
   StorageCardSelectionExtension prepareReadBlocks(int fromBlockAddress, int toBlockAddress);
 
   /**
+   * Prepares the reading of the system block from the storage card when present.
+   *
+   * <p>Not all storage card types include a system block. This method should only be called for
+   * card types that support system block access.
+   *
+   * <p>Once this command is processed, the result is available in {@link StorageCard} via {@link
+   * StorageCard#getBlock} and {@link StorageCard#getBlocks(int, int)} methods.
+   * @return The current instance.
+   * @throws UnsupportedOperationException If the current card type does not support system block
+   *     access.
+   * @since 1.2.0
+   */
+  StorageCardSelectionExtension prepareReadSystemBlock();
+
+  /**
    * Prepares a Mifare Classic authentication command using a provided key.
    *
    * <p>This method is specific to Mifare Classic cards and must be called before reading from or
