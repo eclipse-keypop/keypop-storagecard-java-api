@@ -104,10 +104,12 @@ public interface StorageCardTransactionManager
    * <p>This method is specific to ST25 and SRT512 card types which provide access to a system block
    * at address 255 containing card-specific metadata and configuration data.
    *
-   * <p>Once this command is processed, the result is available in {@link StorageCard}.
+   * <p>Once this command is processed, the result is available in {@link StorageCard} via {@link
+   * StorageCard#getSystemBlock()} method.
    *
    * @return The current instance.
    * @throws UnsupportedOperationException If the current card type is not ST25/SRT512.
+   * @see StorageCard#getSystemBlock()
    * @since 1.1.0
    */
   StorageCardTransactionManager prepareSt25ReadSystemBlock();
