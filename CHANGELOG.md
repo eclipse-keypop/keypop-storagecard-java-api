@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [unreleased]
 
+## [1.2.0] - 2026-03-18
 ### Added
-- **System block management**: New method to handle system blocks during selection for compatible storage card types:
+- **System block management**: New method to read system blocks during selection for compatible storage card types:
   - `StorageCardSelectionExtension.prepareSt25ReadSystemBlock()` method.
 
 ## [1.1.1] - 2026-02-20
