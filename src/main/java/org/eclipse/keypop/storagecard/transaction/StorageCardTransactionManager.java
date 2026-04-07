@@ -122,14 +122,17 @@ public interface StorageCardTransactionManager
    *
    * <p>The data length must match the block size defined by the card's {@link ProductType}.
    *
-   * <p><strong>Important:</strong> After execution of this write command, the {@link StorageCard}
-   * memory image is <strong>not automatically updated</strong>. ST25/SRT512 cards do not provide
-   * reliable status codes to confirm successful write operations. To ensure data consistency, an
-   * explicit read operation must be performed after the write to refresh the memory image and
-   * verify the actual content stored on the card.
+   * <p><strong>Important:</strong> It is the user's responsibility to ensure that the write
+   * operations are coherent with the target card's technology (e.g., OTP bits). The data provided
+   * must represent the <b>expected final state</b> of the system block after the write operation. *
    *
-   * @param data The data to be written to the system block. The length must match the card's block
-   *     size.
+   * <p>ST25/SRT512 cards do not provide reliable status codes to confirm successful write
+   * operations. Consequently, the library performs an automatic verification read. This check will
+   * fail if the physical state of the system block after the write does not exactly match the
+   * provided data.
+   *
+   * @param data The data to be written to the system block (expected final state). The length must
+   *     match the card's block size.
    * @return The current instance.
    * @throws IllegalArgumentException If data is null or its length does not match the block size.
    * @throws UnsupportedOperationException If the current card type is not ST25/SRT512.
@@ -180,15 +183,18 @@ public interface StorageCardTransactionManager
    * array divided by the block size of the storage card. The block size is provided by {@link
    * ProductType#getBlockSize()}.
    *
-   * <p><strong>Important:</strong> Some storage card technologies do not provide reliable status
-   * codes to confirm successful write operations. For such cards (e.g., SRT512/ST25), the library
-   * automatically performs a verification read after each write to ensure that the data has been
-   * correctly stored. For cards that provide a reliable write acknowledgment, no additional read is
-   * performed. In all cases, the library guarantees the integrity of the written data, and the
-   * application does not need to explicitly perform verification reads.
+   * <p><strong>Important:</strong> It is the user's responsibility to ensure that the write
+   * operations are coherent with the target card's technology (e.g., OTP bits, counters). The data
+   * provided must represent the <b>expected final state</b> of the blocks after the write
+   * operation. *
+   *
+   * <p>For cards that do not provide reliable status codes (e.g., SRT512/ST25), the library
+   * performs an automatic verification read. This check will fail if the physical state of the card
+   * after the write does not exactly match the provided data. For cards providing reliable
+   * acknowledgment, no additional read is performed.
    *
    * @param fromBlockAddress The offset from which the blocks will be written.
-   * @param data The data to be written to the storage card.
+   * @param data The data to be written to the storage card (expected final state).
    * @return The current instance of the {@link StorageCardTransactionManager}.
    * @throws IllegalArgumentException If data is null or its length is not a multiple of the block
    *     size.
