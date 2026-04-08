@@ -39,10 +39,10 @@ import org.eclipse.keypop.storagecard.card.StorageCard;
  * <p><strong>For read commands:</strong> The {@link StorageCard} memory image is updated with the
  * data retrieved from the card.
  *
- * <p><strong>For write commands:</strong> The {@link StorageCard} memory image is <strong>not
- * updated</strong> even when the command appears successful, as some storage card technologies do
- * not provide reliable confirmation of write completion. Applications should perform explicit read
- * operations after writes to verify the actual card content and update the memory image.
+ * <p><strong>For write commands:</strong> The {@link StorageCard} memory image is updated with the
+ * written data once the write is confirmed successful. For card technologies that do not provide
+ * reliable status codes (e.g. ST25/SRT512), confirmation is obtained via an automatic verification
+ * read; the memory image is updated only if this verification passes.
  *
  * <p>The process is interrupted at the first failed command.
  *
@@ -124,7 +124,7 @@ public interface StorageCardTransactionManager
    *
    * <p><strong>Important:</strong> It is the user's responsibility to ensure that the write
    * operations are coherent with the target card's technology (e.g., OTP bits). The data provided
-   * must represent the <b>expected final state</b> of the system block after the write operation. *
+   * must represent the <b>expected final state</b> of the system block after the write operation.
    *
    * <p>ST25/SRT512 cards do not provide reliable status codes to confirm successful write
    * operations. Consequently, the library performs an automatic verification read. This check will
@@ -186,7 +186,7 @@ public interface StorageCardTransactionManager
    * <p><strong>Important:</strong> It is the user's responsibility to ensure that the write
    * operations are coherent with the target card's technology (e.g., OTP bits, counters). The data
    * provided must represent the <b>expected final state</b> of the blocks after the write
-   * operation. *
+   * operation.
    *
    * <p>For cards that do not provide reliable status codes (e.g., SRT512/ST25), the library
    * performs an automatic verification read. This check will fail if the physical state of the card
