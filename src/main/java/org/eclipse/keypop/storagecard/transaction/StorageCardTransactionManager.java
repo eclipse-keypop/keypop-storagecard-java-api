@@ -78,12 +78,6 @@ public interface StorageCardTransactionManager
    *
    * <p>The data length must match the block size defined by the card's {@link ProductType}.
    *
-   * <p><strong>Important:</strong> After execution of this write command, the {@link StorageCard}
-   * memory image is <strong>not automatically updated</strong>. Some storage card technologies do
-   * not provide reliable status codes to confirm successful write operations. To ensure data
-   * consistency, an explicit read operation must be performed after the write to refresh the memory
-   * image and verify the actual content stored on the card.
-   *
    * @param data The data to be written to the system block. The length must match the card's block
    *     size.
    * @return The current instance.
