@@ -20,12 +20,20 @@ import org.eclipse.keypop.storagecard.transaction.StorageCardTransactionManager;
 /**
  * Storage Card API Factory.
  *
+ * <p>See <a
+ * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#type_StorageCardApiFactory">StorageCardApiFactory</a>
+ * for the normative contract.
+ *
  * @since 1.0.0
  */
 public interface StorageCardApiFactory {
 
   /**
    * Creates a new instance of {@link StorageCardSelectionExtension}.
+   *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardApiFactory_createStorageCardSelectionExtension">StorageCardApiFactory.createStorageCardSelectionExtension</a>
+   * for the normative contract.
    *
    * @param productType The targeted product type.
    * @return A new instance of {@link StorageCardSelectionExtension}.
@@ -35,6 +43,10 @@ public interface StorageCardApiFactory {
 
   /**
    * Creates an instance of {@link StorageCardTransactionManager}.
+   *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardApiFactory_createStorageCardTransactionManager">StorageCardApiFactory.createStorageCardTransactionManager</a>
+   * for the normative contract.
    *
    * @param reader The reader through which the card communicates.
    * @param card The initial card data provided by the selection process.

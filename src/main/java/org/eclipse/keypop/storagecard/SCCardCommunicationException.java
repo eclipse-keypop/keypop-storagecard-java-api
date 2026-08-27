@@ -15,15 +15,13 @@ import org.eclipse.keypop.reader.CardCommunicationException;
 import org.eclipse.keypop.storagecard.card.StorageCard;
 
 /**
- * Indicates an input/output error that occurred while communicating with the {@link StorageCard}.
+ * Indicates an input/output error during the dialog with the {@link StorageCard} — transmission
+ * failure, card removal during processing, or failed automatic verification read after a write
+ * operation on cards lacking reliable write acknowledgment.
  *
- * <p>This exception reflects errors in the card communication process, such as transmission
- * failures, card removal during processing, or any error preventing the expected response from the
- * card.
- *
- * <p>It is also thrown when an automatic verification read, performed after a write operation on
- * storage cards that do not provide reliable write acknowledgment, fails to confirm that the
- * expected data was correctly stored.
+ * <p>See <a
+ * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#type_SCCardCommunicationException">SCCardCommunicationException</a>
+ * for the normative contract.
  *
  * @since 1.0.0
  */
@@ -31,6 +29,7 @@ public final class SCCardCommunicationException extends CardCommunicationExcepti
     implements StorageCardException {
 
   private final Integer blockAddress;
+  private final Integer idCommand;
 
   /**
    * Creates a new exception indicating a card communication error during the execution of a storage
@@ -41,8 +40,7 @@ public final class SCCardCommunicationException extends CardCommunicationExcepti
    * @since 1.0.0
    */
   public SCCardCommunicationException(Integer blockAddress, String message) {
-    super(message);
-    this.blockAddress = blockAddress;
+    this(blockAddress, null, message);
   }
 
   /**
@@ -55,8 +53,39 @@ public final class SCCardCommunicationException extends CardCommunicationExcepti
    * @since 1.0.0
    */
   public SCCardCommunicationException(Integer blockAddress, String message, Throwable cause) {
+    this(blockAddress, null, message, cause);
+  }
+
+  /**
+   * Creates a new exception indicating a card communication error during the execution of a storage
+   * card command identified by the provided command identifier.
+   *
+   * @param blockAddress The block address involved in the error, or {@code null} if not relevant.
+   * @param idCommand The identifier of the failing command, or {@code null} if not relevant.
+   * @param message The message describing the exception context.
+   * @since 2.0.0
+   */
+  public SCCardCommunicationException(Integer blockAddress, Integer idCommand, String message) {
+    super(message);
+    this.blockAddress = blockAddress;
+    this.idCommand = idCommand;
+  }
+
+  /**
+   * Creates a new exception indicating a card communication error during the execution of a storage
+   * card command identified by the provided command identifier, with an underlying cause.
+   *
+   * @param blockAddress The block address involved in the error, or {@code null} if not relevant.
+   * @param idCommand The identifier of the failing command, or {@code null} if not relevant.
+   * @param message The message describing the exception context.
+   * @param cause The underlying cause of the exception.
+   * @since 2.0.0
+   */
+  public SCCardCommunicationException(
+      Integer blockAddress, Integer idCommand, String message, Throwable cause) {
     super(message, cause);
     this.blockAddress = blockAddress;
+    this.idCommand = idCommand;
   }
 
   /**
@@ -67,5 +96,15 @@ public final class SCCardCommunicationException extends CardCommunicationExcepti
   @Override
   public Integer getBlockAddress() {
     return blockAddress;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @since 2.0.0
+   */
+  @Override
+  public Integer getIdCommand() {
+    return idCommand;
   }
 }

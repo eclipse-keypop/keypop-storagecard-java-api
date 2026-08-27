@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 [unreleased]
+:warning: Major version aligning the API with version `2.0` of the
+[CNA Terminal Storage Card API specification](https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/).
+This release is **not** backward compatible with `1.x`.
+### Added
+- `StorageCardException.getIdCommand()`: identifier of the command that caused the exception.
+- `StorageCardTransactionManager.prepareWriteBlocks(int, byte[], int)` and
+  `prepareSt25WriteSystemBlock(byte[], int)`: overloads carrying an application-supplied command identifier.
+- Constructors accepting an `idCommand` on `SCAuthenticationFailedException`, `SCCardCommunicationException`,
+  `SCInvalidCardResponseException` and `SCReaderCommunicationException`. The existing constructors are preserved
+  and delegate with a null identifier.
+### Changed
+- `StorageCardTransactionManager` now extends the non-generic `CardTransactionManager` (Reader API 3.0) instead of
+  `CardTransactionManager<StorageCardTransactionManager>`; commands are processed via `processCommands()` without
+  a `ChannelControl` argument.
+- Upgraded the `keypop-reader-java-api` dependency to `3.0.0`.
+### Removed
+- `StorageCardTransactionManager.prepareReadSystemBlock()` and `prepareWriteSystemBlock(byte[])`, deprecated since
+  `1.1.0`: use `prepareSt25ReadSystemBlock()` and `prepareSt25WriteSystemBlock(byte[])`.
+- Dropped the `keypop-card-java-api` dependency, which no source file referenced.
 ### Changed
 - **Javadoc**: clarified write contract for `prepareWriteBlocks` and `prepareSt25WriteSystemBlock`.
 

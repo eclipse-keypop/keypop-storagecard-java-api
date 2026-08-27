@@ -11,249 +11,172 @@
  ************************************************************************************** */
 package org.eclipse.keypop.storagecard.transaction;
 
-import org.eclipse.keypop.reader.ChannelControl;
 import org.eclipse.keypop.reader.transaction.spi.CardTransactionManager;
 import org.eclipse.keypop.storagecard.MifareClassicKeyType;
+import org.eclipse.keypop.storagecard.StorageCardApiFactory;
 import org.eclipse.keypop.storagecard.card.ProductType;
 import org.eclipse.keypop.storagecard.card.StorageCard;
 
 /**
- * Provides methods to manage APDU exchanges with a storage card.
+ * Manages the APDU exchanges with a {@link StorageCard}, obtained via {@link
+ * StorageCardApiFactory#createStorageCardTransactionManager}.
  *
- * <p>This interface allows to:
+ * <p>Commands are prepared with the {@code prepare} operations and processed through the inherited
+ * {@link CardTransactionManager#processCommands()} operation. The overloads carrying an {@code
+ * idCommand} allow the failing command to be identified on the resulting exception via {@code
+ * StorageCardException.getIdCommand()}.
  *
- * <ul>
- *   <li>Prepare read and write operations to the card
- *   <li>Process prepared commands in a single transaction
- *   <li>Manage the communication channel with the card
- * </ul>
- *
- * <p><b>Note about processing commands</b>
- *
- * <p>The inherited {@link #processCommands(ChannelControl)} method processes all previously
- * prepared commands and closes the physical channel if requested.
- *
- * <p>All APDUs corresponding to the prepared commands are sent to the card, their responses are
- * retrieved and used to update the {@link StorageCard} associated with the transaction.
- *
- * <p><strong>For read commands:</strong> The {@link StorageCard} memory image is updated with the
- * data retrieved from the card.
- *
- * <p><strong>For write commands:</strong> The {@link StorageCard} memory image is updated with the
- * written data once the write is confirmed successful. For card technologies that do not provide
- * reliable status codes (e.g. ST25/SRT512), confirmation is obtained via an automatic verification
- * read; the memory image is updated only if this verification passes.
- *
- * <p>The process is interrupted at the first failed command.
+ * <p>See <a
+ * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#type_StorageCardTransactionManager">StorageCardTransactionManager</a>
+ * for the normative contract.
  *
  * @since 1.0.0
  */
-public interface StorageCardTransactionManager
-    extends CardTransactionManager<StorageCardTransactionManager> {
+public interface StorageCardTransactionManager extends CardTransactionManager {
 
   /**
-   * Prepares the reading of the system block from the storage card when present.
+   * Prepares the reading of a single block.
    *
-   * <p>Not all storage card types include a system block. This method should only be called for
-   * card types that support system block access.
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardTransactionManager_prepareReadBlock">StorageCardTransactionManager.prepareReadBlock</a>
+   * for the normative contract.
    *
-   * <p>Once this command is processed, the result is available in {@link StorageCard}.
-   *
+   * @param blockAddress The address of the block to read.
    * @return The current instance.
-   * @throws UnsupportedOperationException If the current card type does not support system block
-   *     access.
-   * @since 1.0.0
-   * @deprecated Use {@link #prepareSt25ReadSystemBlock()} instead. This method will be removed in a
-   *     future version.
-   */
-  @Deprecated
-  StorageCardTransactionManager prepareReadSystemBlock();
-
-  /**
-   * Prepares the writing of data to the system block of the storage card when present.
-   *
-   * <p>System blocks contain card-specific metadata and configuration data. Not all storage card
-   * types include a system block that can be written to. This method should only be called for card
-   * types that support system block write access.
-   *
-   * <p>The data length must match the block size defined by the card's {@link ProductType}.
-   *
-   * @param data The data to be written to the system block. The length must match the card's block
-   *     size.
-   * @return The current instance.
-   * @throws IllegalArgumentException If data is null or its length does not match the block size.
-   * @throws UnsupportedOperationException If the current card type does not support system block
-   *     write access.
-   * @see ProductType#getBlockSize()
-   * @since 1.0.0
-   * @deprecated Use {@link #prepareSt25WriteSystemBlock(byte[])} instead. This method will be
-   *     removed in a future version.
-   */
-  @Deprecated
-  StorageCardTransactionManager prepareWriteSystemBlock(byte[] data);
-
-  /**
-   * Prepares the reading of the system block from an ST25/SRT512 storage card.
-   *
-   * <p>This method is specific to ST25 and SRT512 card types which provide access to a system block
-   * at address 255 containing card-specific metadata and configuration data.
-   *
-   * <p>Once this command is processed, the result is available in {@link StorageCard} via {@link
-   * StorageCard#getSystemBlock()} method.
-   *
-   * @return The current instance.
-   * @throws UnsupportedOperationException If the current card type is not ST25/SRT512.
-   * @see StorageCard#getSystemBlock()
-   * @since 1.1.0
-   */
-  StorageCardTransactionManager prepareSt25ReadSystemBlock();
-
-  /**
-   * Prepares the writing of data to the system block of an ST25/SRT512 storage card.
-   *
-   * <p>This method is specific to ST25 and SRT512 card types which provide access to a system block
-   * at address 255 containing card-specific metadata and configuration data.
-   *
-   * <p>The data length must match the block size defined by the card's {@link ProductType}.
-   *
-   * <p><strong>Important:</strong> It is the user's responsibility to ensure that the write
-   * operations are coherent with the target card's technology (e.g., OTP bits). The data provided
-   * must represent the <b>expected final state</b> of the system block after the write operation.
-   *
-   * <p>ST25/SRT512 cards do not provide reliable status codes to confirm successful write
-   * operations. Consequently, the library performs an automatic verification read. This check will
-   * fail if the physical state of the system block after the write does not exactly match the
-   * provided data.
-   *
-   * @param data The data to be written to the system block (expected final state). The length must
-   *     match the card's block size.
-   * @return The current instance.
-   * @throws IllegalArgumentException If data is null or its length does not match the block size.
-   * @throws UnsupportedOperationException If the current card type is not ST25/SRT512.
-   * @see ProductType#getBlockSize()
-   * @since 1.1.0
-   */
-  StorageCardTransactionManager prepareSt25WriteSystemBlock(byte[] data);
-
-  /**
-   * Prepares the reading of a specific block from the storage card.
-   *
-   * <p>Block addresses start at 0 and the maximum value is equal to {@link
-   * ProductType#getBlockCount()} - 1.
-   *
-   * <p>Once this command is processed, the result is available in {@link StorageCard}.
-   *
-   * @param blockAddress The address of the block to be read.
-   * @return The current instance.
-   * @throws IllegalArgumentException If the block address is out of range.
-   * @see ProductType#getBlockCount()
+   * @throws IllegalArgumentException If the block address is out of range for the card {@link
+   *     ProductType}.
    * @since 1.0.0
    */
   StorageCardTransactionManager prepareReadBlock(int blockAddress);
 
   /**
-   * Prepares the reading of a range of blocks from the storage card.
+   * Prepares the reading of a range of blocks.
    *
-   * <p>Block addresses start at 0 and the maximum value is equal to {@link
-   * ProductType#getBlockCount()} - 1.
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardTransactionManager_prepareReadBlocks">StorageCardTransactionManager.prepareReadBlocks</a>
+   * for the normative contract.
    *
-   * <p>Once this command is processed, the result is available in {@link StorageCard}.
-   *
-   * @param fromBlockAddress The starting block address (inclusive).
-   * @param toBlockAddress The ending block address (inclusive).
+   * @param fromBlockAddress The address of the first block to read.
+   * @param toBlockAddress The address of the last block to read.
    * @return The current instance.
-   * @throws IllegalArgumentException If one of the arguments is out of range.
-   * @see ProductType#getBlockCount()
+   * @throws IllegalArgumentException If one of the block addresses is out of range for the card
+   *     {@link ProductType} or if the range is invalid.
    * @since 1.0.0
    */
   StorageCardTransactionManager prepareReadBlocks(int fromBlockAddress, int toBlockAddress);
 
   /**
-   * Prepares the writing of blocks of data to the storage card starting from a specific block
-   * number offset.
+   * Prepares the writing of one or more consecutive blocks.
    *
-   * <p>The provided data should be a byte array representing the content of the blocks to be
-   * written. The number of blocks that will be written is determined by the length of the data
-   * array divided by the block size of the storage card. The block size is provided by {@link
-   * ProductType#getBlockSize()}.
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardTransactionManager_prepareWriteBlocks">StorageCardTransactionManager.prepareWriteBlocks</a>
+   * for the normative contract.
    *
-   * <p><strong>Important:</strong> It is the user's responsibility to ensure that the write
-   * operations are coherent with the target card's technology (e.g., OTP bits, counters). The data
-   * provided must represent the <b>expected final state</b> of the blocks after the write
-   * operation.
-   *
-   * <p>For cards that do not provide reliable status codes (e.g., SRT512/ST25), the library
-   * performs an automatic verification read. This check will fail if the physical state of the card
-   * after the write does not exactly match the provided data. For cards providing reliable
-   * acknowledgment, no additional read is performed.
-   *
-   * @param fromBlockAddress The offset from which the blocks will be written.
-   * @param data The data to be written to the storage card (expected final state).
-   * @return The current instance of the {@link StorageCardTransactionManager}.
-   * @throws IllegalArgumentException If data is null or its length is not a multiple of the block
-   *     size.
-   * @see ProductType#getBlockCount()
+   * @param fromBlockAddress The address of the first block to write.
+   * @param data The data to write, representing the expected final state of the blocks.
+   * @return The current instance.
+   * @throws IllegalArgumentException If the block address is out of range for the card {@link
+   *     ProductType} or if the data is null or of an invalid length.
    * @since 1.0.0
    */
   StorageCardTransactionManager prepareWriteBlocks(int fromBlockAddress, byte[] data);
 
   /**
-   * Prepares a Mifare Classic authentication command using a provided key.
+   * Prepares the writing of one or more consecutive blocks, with an application-supplied command
+   * identifier.
    *
-   * <p>This method is specific to Mifare Classic cards and must be called before reading from or
-   * writing to protected sectors. The authentication applies to the entire sector containing the
-   * specified block address.
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardTransactionManager_prepareWriteBlocks_withId">StorageCardTransactionManager.prepareWriteBlocks</a>
+   * for the normative contract.
    *
-   * <p>The key must be a 6-byte array representing the Mifare Classic key value.
-   *
-   * <p>When the key value is provided this way, it will be sent to the reader to be stored as a
-   * volatile key at index 0 (see Load Key command of the PC/SC standard). This volatile key is
-   * temporary and will be erased after usage, when the reader is powered off.
-   *
-   * <p><strong>Security Note:</strong> This method transmits the key value over the communication
-   * channel between the application and the reader. For production environments and
-   * security-sensitive applications, it is recommended to use {@link
-   * #prepareMifareClassicAuthenticate(int, MifareClassicKeyType, int)} instead, which references a
-   * pre-stored key in the reader without transmitting the key value.
-   *
-   * <p>Once authenticated, subsequent read and write operations within the same sector can be
-   * performed without re-authentication, until the card is removed from the field or another sector
-   * is accessed.
-   *
-   * @param blockAddress The address of any block within the sector to authenticate.
-   * @param mifareClassicKeyType The type of key to use (Key A or Key B).
-   * @param key The 6-byte key data for authentication.
+   * @param fromBlockAddress The address of the first block to write.
+   * @param data The data to write, representing the expected final state of the blocks.
+   * @param idCommand The application-supplied identifier of this command.
    * @return The current instance.
-   * @throws IllegalArgumentException If the block address is out of range, or if the key is null or
-   *     not exactly 6 bytes long.
-   * @throws UnsupportedOperationException If the current card type does not support authentication.
+   * @throws IllegalArgumentException If the block address is out of range for the card {@link
+   *     ProductType} or if the data is null or of an invalid length.
+   * @since 2.0.0
+   */
+  StorageCardTransactionManager prepareWriteBlocks(
+      int fromBlockAddress, byte[] data, int idCommand);
+
+  /**
+   * Prepares the reading of the system block of an ST25 / SRT512 card.
+   *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardTransactionManager_prepareSt25ReadSystemBlock">StorageCardTransactionManager.prepareSt25ReadSystemBlock</a>
+   * for the normative contract.
+   *
+   * @return The current instance.
+   * @throws UnsupportedOperationException If the card {@link ProductType} has no system block.
+   * @since 1.1.0
+   */
+  StorageCardTransactionManager prepareSt25ReadSystemBlock();
+
+  /**
+   * Prepares the writing of the system block of an ST25 / SRT512 card.
+   *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardTransactionManager_prepareSt25WriteSystemBlock">StorageCardTransactionManager.prepareSt25WriteSystemBlock</a>
+   * for the normative contract.
+   *
+   * @param data The data to write, representing the expected final state of the system block.
+   * @return The current instance.
+   * @throws IllegalArgumentException If the data is null or of an invalid length.
+   * @throws UnsupportedOperationException If the card {@link ProductType} has no system block.
+   * @since 1.1.0
+   */
+  StorageCardTransactionManager prepareSt25WriteSystemBlock(byte[] data);
+
+  /**
+   * Prepares the writing of the system block of an ST25 / SRT512 card, with an application-supplied
+   * command identifier.
+   *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardTransactionManager_prepareSt25WriteSystemBlock_withId">StorageCardTransactionManager.prepareSt25WriteSystemBlock</a>
+   * for the normative contract.
+   *
+   * @param data The data to write, representing the expected final state of the system block.
+   * @param idCommand The application-supplied identifier of this command.
+   * @return The current instance.
+   * @throws IllegalArgumentException If the data is null or of an invalid length.
+   * @throws UnsupportedOperationException If the card {@link ProductType} has no system block.
+   * @since 2.0.0
+   */
+  StorageCardTransactionManager prepareSt25WriteSystemBlock(byte[] data, int idCommand);
+
+  /**
+   * Prepares the authentication to a MIFARE Classic sector using the provided key value.
+   *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardTransactionManager_prepareMifareClassicAuthenticate_withKey">StorageCardTransactionManager.prepareMifareClassicAuthenticate</a>
+   * for the normative contract.
+   *
+   * @param blockAddress The address of a block of the targeted sector.
+   * @param mifareClassicKeyType The key type to use.
+   * @param key The key value.
+   * @return The current instance.
+   * @throws IllegalArgumentException If a parameter is null or out of range.
+   * @throws UnsupportedOperationException If the card {@link ProductType} has no authentication.
    * @since 1.1.0
    */
   StorageCardTransactionManager prepareMifareClassicAuthenticate(
       int blockAddress, MifareClassicKeyType mifareClassicKeyType, byte[] key);
 
   /**
-   * Prepares a Mifare Classic authentication command using a key stored in the reader.
+   * Prepares the authentication to a MIFARE Classic sector using a key referenced by its number in
+   * the reader.
    *
-   * <p>This method is specific to Mifare Classic cards and must be called before reading from or
-   * writing to protected sectors. The authentication applies to the entire sector containing the
-   * specified block address.
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardTransactionManager_prepareMifareClassicAuthenticate_withKeyNumber">StorageCardTransactionManager.prepareMifareClassicAuthenticate</a>
+   * for the normative contract.
    *
-   * <p>The key is referenced by its storage index in the reader's key storage. This allows using
-   * pre-configured keys without transmitting them over the communication channel, providing
-   * enhanced security.
-   *
-   * <p>Once authenticated, subsequent read and write operations within the same sector can be
-   * performed without re-authentication, until the card is removed from the field or another sector
-   * is accessed.
-   *
-   * @param blockAddress The address of any block within the sector to authenticate.
-   * @param mifareClassicKeyType The type of key to use (Key A or Key B).
-   * @param keyNumber The index of the key in the reader's key storage.
+   * @param blockAddress The address of a block of the targeted sector.
+   * @param mifareClassicKeyType The key type to use.
+   * @param keyNumber The number of the key to use.
    * @return The current instance.
-   * @throws IllegalArgumentException If the block address is out of range, or if the key number is
-   *     invalid.
-   * @throws UnsupportedOperationException If the current card type does not support authentication.
+   * @throws IllegalArgumentException If a parameter is null or out of range.
+   * @throws UnsupportedOperationException If the card {@link ProductType} has no authentication.
    * @since 1.1.0
    */
   StorageCardTransactionManager prepareMifareClassicAuthenticate(

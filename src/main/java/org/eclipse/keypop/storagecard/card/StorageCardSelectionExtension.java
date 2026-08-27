@@ -18,6 +18,10 @@ import org.eclipse.keypop.storagecard.MifareClassicKeyType;
  * Extends the {@link CardSelectionExtension} interface of the "Keypop Reader API" to provide means
  * to define optional commands to be executed during the selection phase.
  *
+ * <p>See <a
+ * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#type_StorageCardSelectionExtension">StorageCardSelectionExtension</a>
+ * for the normative contract.
+ *
  * @since 1.0.0
  */
 public interface StorageCardSelectionExtension extends CardSelectionExtension {
@@ -29,6 +33,10 @@ public interface StorageCardSelectionExtension extends CardSelectionExtension {
    * ProductType#getBlockCount()} - 1.
    *
    * <p>Once this command is processed, the result is available in {@link StorageCard}.
+   *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardSelectionExtension_prepareReadBlock">StorageCardSelectionExtension.prepareReadBlock</a>
+   * for the normative contract.
    *
    * @param blockAddress The address of the block to be read.
    * @return The current instance.
@@ -47,6 +55,10 @@ public interface StorageCardSelectionExtension extends CardSelectionExtension {
    * <p>Once this command is processed, the result is available in {@link StorageCard} via {@link
    * StorageCard#getBlock} and {@link StorageCard#getBlocks(int, int)} methods.
    *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardSelectionExtension_prepareReadBlocks">StorageCardSelectionExtension.prepareReadBlocks</a>
+   * for the normative contract.
+   *
    * @param fromBlockAddress The starting block address (inclusive).
    * @param toBlockAddress The ending block address (inclusive).
    * @return The current instance.
@@ -64,6 +76,10 @@ public interface StorageCardSelectionExtension extends CardSelectionExtension {
    *
    * <p>Once this command is processed, the result is available in {@link StorageCard} via {@link
    * StorageCard#getSystemBlock()} method.
+   *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardSelectionExtension_prepareSt25ReadSystemBlock">StorageCardSelectionExtension.prepareSt25ReadSystemBlock</a>
+   * for the normative contract.
    *
    * @return The current instance.
    * @throws UnsupportedOperationException If the current card type is not ST25/SRT512.
@@ -93,6 +109,9 @@ public interface StorageCardSelectionExtension extends CardSelectionExtension {
    *
    * @param blockAddress The address of any block within the sector to authenticate.
    * @param mifareClassicKeyType The type of key to use (Key A or Key B).
+   *     <p>See <a
+   *     href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardSelectionExtension_prepareMifareClassicAuthenticate_withKey">StorageCardSelectionExtension.prepareMifareClassicAuthenticate</a>
+   *     for the normative contract.
    * @param key The 6-byte key data for authentication.
    * @return The current instance.
    * @throws IllegalArgumentException If the block address is out of range, or if the key is null or
@@ -115,6 +134,9 @@ public interface StorageCardSelectionExtension extends CardSelectionExtension {
    *
    * @param blockAddress The address of any block within the sector to authenticate.
    * @param mifareClassicKeyType The type of key to use (Key A or Key B).
+   *     <p>See <a
+   *     href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_StorageCardSelectionExtension_prepareMifareClassicAuthenticate_withKeyNumber">StorageCardSelectionExtension.prepareMifareClassicAuthenticate</a>
+   *     for the normative contract.
    * @param keyNumber The index of the key in the reader's key storage.
    * @return The current instance.
    * @throws IllegalArgumentException If the block address is out of range, or if the key number is

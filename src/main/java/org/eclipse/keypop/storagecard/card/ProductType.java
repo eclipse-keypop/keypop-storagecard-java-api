@@ -14,6 +14,10 @@ package org.eclipse.keypop.storagecard.card;
 /**
  * The ProductType enum represents the different types of storage cards supported by the library.
  *
+ * <p>See <a
+ * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#type_ProductType">ProductType</a>
+ * for the normative contract.
+ *
  * @since 1.0.0
  */
 public enum ProductType {
@@ -82,6 +86,10 @@ public enum ProductType {
    * <p>This number reflects the quantity of blocks contained in the main memory area. Please note
    * that there might be additional "system" blocks not included in this count.
    *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_ProductType_getBlockCount">ProductType.getBlockCount</a>
+   * for the normative contract.
+   *
    * @return The number of blocks in the storage card.
    * @since 1.0.0
    */
@@ -91,6 +99,10 @@ public enum ProductType {
 
   /**
    * Returns the size of each block in bytes.
+   *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_ProductType_getBlockSize">ProductType.getBlockSize</a>
+   * for the normative contract.
    *
    * @return The size of each block in bytes.
    * @since 1.0.0
@@ -108,6 +120,10 @@ public enum ProductType {
    * <p>When a system block is available, it can be read using the appropriate prepare methods
    * during card selection or transaction processing.
    *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_ProductType_hasSystemBlock">ProductType.hasSystemBlock</a>
+   * for the normative contract.
+   *
    * @return {@code true} if this card type has an accessible system block, false otherwise.
    * @since 1.0.0
    */
@@ -122,6 +138,10 @@ public enum ProductType {
    * write command means the data has been correctly stored, and no additional verification is
    * required. If it returns {@code false}, the card does not guarantee the actual completion of the
    * write, and a verification read must be performed to ensure data consistency.
+   *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_ProductType_hasWriteAcknowledgment">ProductType.hasWriteAcknowledgment</a>
+   * for the normative contract.
    *
    * @return {@code true} if the card provides a reliable write acknowledgment, {@code false}
    *     otherwise.
@@ -141,6 +161,10 @@ public enum ProductType {
    *
    * <p>If this method returns {@code false}, the card allows direct read/write operations without
    * prior authentication.
+   *
+   * <p>See <a
+   * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#op_ProductType_hasAuthentication">ProductType.hasAuthentication</a>
+   * for the normative contract.
    *
    * @return {@code true} if the card requires authentication, {@code false} otherwise.
    * @since 1.1.0
