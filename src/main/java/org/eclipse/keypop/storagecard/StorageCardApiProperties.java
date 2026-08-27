@@ -14,16 +14,20 @@ package org.eclipse.keypop.storagecard;
 /**
  * Storage Card API properties.
  *
+ * <p>See <a
+ * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#type_StorageCardApiProperties">StorageCardApiProperties</a>
+ * for the normative contract.
+ *
  * @since 1.0.0
  */
 public final class StorageCardApiProperties {
 
   /**
-   * API version: {@value}
+   * Version of the API implemented by this binding, as a "MAJOR.MINOR" dotted decimal: {@value}
    *
    * @since 1.0.0
    */
-  public static final String VERSION = "1.2";
+  public static final String VERSION = "2.0";
 
   /** Private constructor */
   private StorageCardApiProperties() {}

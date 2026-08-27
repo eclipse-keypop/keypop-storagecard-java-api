@@ -18,6 +18,10 @@ package org.eclipse.keypop.storagecard;
  * Each sector can be protected independently using these keys, allowing fine-grained access
  * control.
  *
+ * <p>See <a
+ * href="https://docs.terminal-api.calypsonet.org/calypsonet-terminal-storagecard-uml-api/2.0.0-SNAPSHOT/YYMMDD-SP-CNATerminalAPI-StorageCard_v2.0.0-SNAPSHOT.html#type_MifareClassicKeyType">MifareClassicKeyType</a>
+ * for the normative contract.
+ *
  * @since 1.1.0
  */
 public enum MifareClassicKeyType {
