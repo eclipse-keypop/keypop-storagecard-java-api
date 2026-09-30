@@ -1,5 +1,6 @@
 | Version | Documents |
 |:---:|---|
+| 1.2.0-SNAPSHOT | [API documentation](1.2.0-SNAPSHOT) |
 | **1.2.0 (latest stable)** | [API documentation](latest-stable) |
 | 1.1.1 | [API documentation](1.1.1) |
 | 1.1.0 | [API documentation](1.1.0) |
